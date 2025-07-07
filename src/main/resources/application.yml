@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: smartecbot-posts
+  datasource:
+    url: jdbc:postgresql://${host_db:localhost}:${port_db:3306}/${db_name:smartecbot}
+    username: ${db_user:postgres}
+    password: ${db_password:postgres}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: ${db_ddl_auto:none}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: ${db_schema:public}
+        temp:
+          use_jdbc_metadata: false
+        hbm2ddl:
+          import_files_sql_extractor: org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
+        ddl-auto: ${db_ddl_auto:none}
+        global_quoted_identifiers: false
+    show-sql: false
+  sql:
+    init:
+      platform: postgresql
+
+server:
+  port: ${server_port:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+logging:
+  level:
+    root: ${logging_level:INFO}
