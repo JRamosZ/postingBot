@@ -1,5 +1,6 @@
 package com.smartecmx.postingbot.service;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
 import com.smartecmx.postingbot.exception.PostingBotException;
@@ -21,7 +22,7 @@ public class FacebookService {
     public String postMemeToFacebook() throws PostingBotException {
         try {
             Meme memeToPublish = memeUtil.getMemeForFacebook();
-            String memeUrl = imgflipUtil.createMeme(memeToPublish.getTemplateId(), memeToPublish.getMemeTexts());
+            ByteArrayResource memeUrl = imgflipUtil.createMeme(memeToPublish.getTemplateId(), memeToPublish.getMemeTexts());
             String postId = facebookUtil.postFacebookFeed(memeToPublish.getPostHeader(), memeUrl);
             return postId;
         } catch (Exception e) {
