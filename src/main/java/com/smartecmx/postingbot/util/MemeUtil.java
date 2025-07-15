@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class MemeUtil {
     
-    private MemeRepository memeRepository;
+    private final MemeRepository memeRepository;
 
     public Meme getMemeForFacebook() throws PostingBotException{
         List<Meme> memes = memeRepository.findAllByPublishedAtFacebookIsNull();

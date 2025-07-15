@@ -1,7 +1,11 @@
 package com.smartecmx.postingbot.util;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -19,17 +23,18 @@ public class FacebookUtil {
     @Value("${com.smartecmx.postingbot.util.facebook.facebook_post_url}")
     private String facebookPostUrl;
 
-    public String postFacebookFeed (String message, String link) throws FacebookException {
+    public String postFacebookFeed (String message, ByteArrayResource picture) throws FacebookException {
         RestTemplate rest = new RestTemplate();
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("link", link);
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("source", picture);
         params.add("message", message);
+        params.add("access_token", "access_token_placeholder"); // Replace with actual access token
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
 
         ResponseEntity<FacebookResponse> response = rest.postForEntity(facebookPostUrl, request, FacebookResponse.class);
 
