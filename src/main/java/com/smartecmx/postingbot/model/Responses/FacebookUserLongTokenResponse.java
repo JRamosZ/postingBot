@@ -4,10 +4,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
-public class FacebookResponse {
-    
-    private String id;
+public class FacebookUserLongTokenResponse {
+    private String access_token;
+    private String token_type;
+    private String expires_in;
 }

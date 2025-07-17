@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +16,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @MappedSuperclass
-public class AbstractBaseEntity {
+public class AbstractBaseModelEntity {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,11 +27,4 @@ public class AbstractBaseEntity {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
-
-    @Column(name = "published_at_facebook")
-    private LocalDateTime publishedAtFacebook;
-
-    @Column(name = "published_at_instagram")
-    private LocalDateTime publishedAtInstagram;
-
 }

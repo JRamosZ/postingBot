@@ -2,6 +2,7 @@ package com.smartecmx.postingbot.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,5 +35,13 @@ public class FacebookController {
             return ResponseEntity.ok("Meme posted to Facebook successfully, ID: " + postId);
 
     }
-    
+
+    @PostMapping("/getNewPageLongToken/{userShortToken}")
+    public ResponseEntity<String> getNewPageLongToken(@PathVariable("userShortToken") String userShortToken) throws PostingBotException {
+        log.info("Fetching new page long token for Facebook");
+        facebookService.getNewPageLongToken(userShortToken);
+        log.info("New page long token fetched successfully");
+        return ResponseEntity.ok("New long page token fetched successfully");
+    }
+
 }
