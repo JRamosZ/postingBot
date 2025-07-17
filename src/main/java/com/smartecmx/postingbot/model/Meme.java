@@ -13,16 +13,16 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 @Table(name = "memes")
-public class Meme extends AbstractBaseEntity {
-    @Column(name = "templateId", nullable = false)
+public class Meme extends AbstractPostBaseEntity {
+    @Column(name = "template_id", nullable = false)
     private String templateId;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "postHeader", nullable = false)
+    @Column(name = "post_header", nullable = false)
     private String postHeader;
 
-    @Column(name = "memeTexts", nullable = false)
+    @Column(name = "meme_texts", nullable = false)
     private String[] memeTexts;
 }
