@@ -47,3 +47,4 @@ com:
           get_personal_long_life_token_url: ${getPersonalLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/oauth/access_token}
           get_page_long_life_token_url: ${getPageLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/me/accounts}
           facebook_post_url: ${facebookPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/feed}
+          debug_token_url: ${debugTokenUrl:https://graph.facebook.com/debug_token}
