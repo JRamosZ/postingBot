@@ -1,6 +1,9 @@
 package com.smartecmx.postingbot.util;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -9,6 +12,7 @@ import com.smartecmx.postingbot.exception.PostingBotException;
 import com.smartecmx.postingbot.model.Meme;
 import com.smartecmx.postingbot.repository.MemeRepository;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -16,10 +20,16 @@ import lombok.RequiredArgsConstructor;
 public class MemeUtil {
     
     private final MemeRepository memeRepository;
+    private final EmailUtil emailUtil;
 
-    public Meme getMemeForFacebook() throws PostingBotException{
+    public Meme getMemeForFacebook() throws PostingBotException, IOException, MessagingException{
         List<Meme> memes = memeRepository.findAllByPublishedAtFacebookIsNull();
-        if (memes.isEmpty()) {
+        if (memes.size() < 5) {
+            emailUtil.sendRunningOutOfMemesEmail();
+        } else if (memes.size() < 1) {
+            throw new NotFoundException("No memes found for Facebook");
+        } else if (memes.isEmpty()) {
+            emailUtil.sendRanOutOfMemesToPostEmail();
             throw new NotFoundException("No memes found for Facebook");
         }
         return memes.get((int) (Math.random() * memes.size()));
@@ -31,6 +41,12 @@ public class MemeUtil {
             throw new NotFoundException("No memes found for Instagram");
         }
         return memes.get((int) (Math.random() * memes.size()));
+    }
+
+    public void updateMemePublishedAtFacebook(UUID memeId, LocalDateTime publishedAt) throws PostingBotException {
+        Meme meme = memeRepository.findById(memeId).orElseThrow(() -> new NotFoundException("Meme not found with ID: " + memeId));
+        meme.setPublishedAtFacebook(publishedAt);
+        memeRepository.save(meme);
     }
 
 }

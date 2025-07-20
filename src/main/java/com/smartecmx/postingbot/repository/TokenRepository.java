@@ -11,5 +11,7 @@ import com.smartecmx.postingbot.model.Token;
 @Repository
 public interface TokenRepository extends CrudRepository<Token, UUID> {
     
-    List<Token> findAllByTypeAndActive(String type, boolean active);
+    Token findByTypeAndActive(String type, boolean active);
+
+    Token findByValue(String value);
 }
