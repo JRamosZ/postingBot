@@ -1,8 +1,7 @@
 package com.smartecmx.postingbot.controller;
 
-import java.io.IOException;
-
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smartecmx.postingbot.exception.PostingBotException;
 import com.smartecmx.postingbot.service.FacebookService;
 
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +29,7 @@ public class FacebookController {
     }
     
     @PostMapping("/postMeme")
-    public ResponseEntity<String> postToFacebook() throws PostingBotException, IOException, MessagingException {
+    public ResponseEntity<String> postToFacebook() throws PostingBotException {
             log.info("Initiating post to Facebook");
             String postId = facebookService.postMemeToFacebook();
             log.info("Post to Facebook completed successfully");
@@ -47,6 +45,7 @@ public class FacebookController {
         return ResponseEntity.ok("New long page token fetched successfully");
     }
 
+    @Scheduled(cron = "0 0 */12 * * *", zone = "America/Mexico_City")
     @GetMapping("/tokenStatus")
     public ResponseEntity<String> getTokenStatus() throws PostingBotException {
         log.info("Getting token status for Facebook");

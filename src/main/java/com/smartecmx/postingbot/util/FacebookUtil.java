@@ -1,7 +1,5 @@
 package com.smartecmx.postingbot.util;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
@@ -17,13 +15,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.smartecmx.postingbot.exception.FacebookException;
 import com.smartecmx.postingbot.exception.PostingBotException;
-import com.smartecmx.postingbot.model.Responses.FacebookUserLongTokenResponse;
-
-import jakarta.mail.MessagingException;
-
 import com.smartecmx.postingbot.model.Token;
 import com.smartecmx.postingbot.model.Responses.FacebookPageLongTokenResponse;
 import com.smartecmx.postingbot.model.Responses.FacebookPostResponse;
+import com.smartecmx.postingbot.model.Responses.FacebookUserLongTokenResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,7 +42,7 @@ public class FacebookUtil {
 
     private final TokenUtil tokenUtil;
 
-    public String postFacebookFeed (String message, ByteArrayResource picture) throws PostingBotException, IOException, MessagingException {
+    public String postFacebookFeed (String message, ByteArrayResource picture) throws PostingBotException {
         RestTemplate rest = new RestTemplate();
 
         Token token = tokenUtil.getActiveTokenByType("page");

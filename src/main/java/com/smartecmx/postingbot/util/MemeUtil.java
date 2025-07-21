@@ -1,6 +1,5 @@
 package com.smartecmx.postingbot.util;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -11,8 +10,8 @@ import com.smartecmx.postingbot.exception.NotFoundException;
 import com.smartecmx.postingbot.exception.PostingBotException;
 import com.smartecmx.postingbot.model.Meme;
 import com.smartecmx.postingbot.repository.MemeRepository;
+import com.smartecmx.postingbot.service.EmailService;
 
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -20,16 +19,16 @@ import lombok.RequiredArgsConstructor;
 public class MemeUtil {
     
     private final MemeRepository memeRepository;
-    private final EmailUtil emailUtil;
+    private final EmailService emailService;
 
-    public Meme getMemeForFacebook() throws PostingBotException, IOException, MessagingException{
+    public Meme getMemeForFacebook() throws PostingBotException {
         List<Meme> memes = memeRepository.findAllByPublishedAtFacebookIsNull();
         if (memes.size() < 5) {
-            emailUtil.sendRunningOutOfMemesEmail();
+            emailService.sendRunningOutOfMemesEmail();
         } else if (memes.size() < 1) {
             throw new NotFoundException("No memes found for Facebook");
         } else if (memes.isEmpty()) {
-            emailUtil.sendRanOutOfMemesToPostEmail();
+            emailService.sendRanOutOfMemesToPostEmail();
             throw new NotFoundException("No memes found for Facebook");
         }
         return memes.get((int) (Math.random() * memes.size()));

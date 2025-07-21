@@ -1,6 +1,5 @@
 package com.smartecmx.postingbot.util;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +14,8 @@ import com.smartecmx.postingbot.exception.PostingBotException;
 import com.smartecmx.postingbot.model.Token;
 import com.smartecmx.postingbot.model.Responses.FacebookDebugTokenResponse;
 import com.smartecmx.postingbot.repository.TokenRepository;
+import com.smartecmx.postingbot.service.EmailService;
 
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class TokenUtil {
 
     private final TokenRepository tokenRepository;
-    private final EmailUtil emailUtil;
+    private final EmailService emailService;
 
     @Value("${com.smartecmx.postingbot.util.facebook.debug_token_url}")
     private String debugTokenUrl;
@@ -48,10 +47,10 @@ public class TokenUtil {
         tokenRepository.save(newToken);
     }
 
-    public Token getActiveTokenByType(String tokenType) throws PostingBotException, IOException, MessagingException{
+    public Token getActiveTokenByType(String tokenType) throws PostingBotException {
         Token token = tokenRepository.findByTypeAndActive(tokenType, true);
         if (token == null) {
-            emailUtil.sendNoActiveTokenEmail(tokenType);
+            emailService.sendNoActiveTokenEmail(tokenType);
             throw new NotFoundException("No active token found for type: " + tokenType);
         }
         return token;

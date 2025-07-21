@@ -1,6 +1,5 @@
 package com.smartecmx.postingbot.service;
 
-import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 
 import org.springframework.core.io.ByteArrayResource;
@@ -14,13 +13,11 @@ import com.smartecmx.postingbot.model.Token;
 import com.smartecmx.postingbot.model.Responses.FacebookDebugTokenResponse;
 import com.smartecmx.postingbot.model.Responses.FacebookPageLongTokenResponse;
 import com.smartecmx.postingbot.model.Responses.FacebookUserLongTokenResponse;
-import com.smartecmx.postingbot.util.EmailUtil;
 import com.smartecmx.postingbot.util.FacebookUtil;
 import com.smartecmx.postingbot.util.ImgflipUtil;
 import com.smartecmx.postingbot.util.MemeUtil;
 import com.smartecmx.postingbot.util.TokenUtil;
 
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,10 +28,10 @@ public class FacebookService {
     private final ImgflipUtil imgflipUtil;
     private final FacebookUtil facebookUtil;
     private final TokenUtil tokenUtil;
-    private final EmailUtil emailUtil;
+    private final EmailService emailService;
     private static final Integer DEFAULT_TOKEN_DURATION_DAYS = 60; 
 
-    public String postMemeToFacebook() throws PostingBotException, IOException, MessagingException {
+    public String postMemeToFacebook() throws PostingBotException {
         try {
             Meme memeToPublish = memeUtil.getMemeForFacebook();
             ByteArrayResource memeUrl = imgflipUtil.createMeme(memeToPublish.getTemplateId(), memeToPublish.getMemeTexts());
@@ -42,7 +39,7 @@ public class FacebookService {
             memeUtil.updateMemePublishedAtFacebook(memeToPublish.getId(), CommonMethod.getCurrentDateTime());
             return postId;
         } catch (Exception e) {
-            // emailUtil.sendFacebookPostErrorEmail(e.getMessage());
+            emailService.sendFacebookPostErrorEmail(e.getMessage());
             throw new PostingBotException("Failed to post meme to Facebook: " + e.getMessage());
         }
 
@@ -83,7 +80,7 @@ public class FacebookService {
             if (!userTokenInfo.getData().getIs_valid()) {
                 tokenUtil.deactivateToken(userToken.getValue());
                 tokenUtil.deactivateToken(pageToken.getValue());
-                emailUtil.sendUserTokenExpirationEmail();
+                emailService.sendUserTokenExpirationEmail();
                 return "User token is invalid, refresh it inmediately!!!";
             }
             
@@ -91,10 +88,10 @@ public class FacebookService {
             if (daysUntilExpration == 0) {
                 tokenUtil.deactivateToken(userToken.getValue());
                 tokenUtil.deactivateToken(pageToken.getValue());
-                emailUtil.sendUserTokenExpiresTodayEmail();
+                emailService.sendUserTokenExpiresTodayEmail();
                 return "User token expires today, refresh it inmediately, automatic post will be disabled for safety!";
             } else if (daysUntilExpration <= 3) {
-                emailUtil.sendUserTokenExpirationInTimeframeEmail(daysUntilExpration.intValue());
+                emailService.sendUserTokenExpirationInTimeframeEmail(daysUntilExpration.intValue());
                 return "User token is about to expire in " + daysUntilExpration + " days, refresh it!";
             }
 
