@@ -1,6 +1,7 @@
 package com.smartecmx.postingbot.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,15 @@ public class FacebookController {
         facebookService.getNewPageLongToken(userShortToken);
         log.info("New page long token fetched successfully");
         return ResponseEntity.ok("New long page token fetched successfully");
+    }
+
+    @Scheduled(cron = "0 0 */12 * * *", zone = "America/Mexico_City")
+    @GetMapping("/tokenStatus")
+    public ResponseEntity<String> getTokenStatus() throws PostingBotException {
+        log.info("Getting token status for Facebook");
+        String tokenStatus = facebookService.getTokenStatus();
+        log.info("Token status fetched successfully: " + tokenStatus);
+        return ResponseEntity.ok("Token status: " + tokenStatus);
     }
 
 }

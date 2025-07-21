@@ -5,6 +5,17 @@ spring:
     url: jdbc:postgresql://${host_db:localhost}:${port_db:5432}/${db_name:smartec_posting_bot}
     username: ${db_user:postgres}
     password: ${db_password:postgres}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail_user_name:userName}
+    password: ${mail_user_password:userPassword}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -41,10 +52,13 @@ com:
           imgflip_password: ${imgflipPassword:imgflipPassword}
         facebook:
           api_version: ${facebookApiVersion:v23.0}
-          app_id: ${facebookAppId:app_id}
-          app_secret: ${facebookAppSecret:app_secret}
+          app_id: ${facebookAppId:facebookAppId}
+          app_secret: ${facebookAppSecret:facebookAppSecret}
           page_id: ${facebookPageId:page_id}
           get_personal_long_life_token_url: ${getPersonalLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/oauth/access_token}
           get_page_long_life_token_url: ${getPageLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/me/accounts}
           facebook_post_url: ${facebookPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/feed}
           debug_token_url: ${debugTokenUrl:https://graph.facebook.com/debug_token}
+        mail:
+          notifications_receiver: ${notificationsReceiver:notificationsReceiver}
+          notifications_receiver_cc: ${notificationsReceiverCc:notificationsReceiverCc}

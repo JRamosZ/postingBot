@@ -15,14 +15,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.smartecmx.postingbot.exception.FacebookException;
 import com.smartecmx.postingbot.exception.PostingBotException;
-import com.smartecmx.postingbot.model.Responses.FacebookUserLongTokenResponse;
+import com.smartecmx.postingbot.model.Token;
 import com.smartecmx.postingbot.model.Responses.FacebookPageLongTokenResponse;
 import com.smartecmx.postingbot.model.Responses.FacebookPostResponse;
+import com.smartecmx.postingbot.model.Responses.FacebookUserLongTokenResponse;
 
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Component
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class FacebookUtil {
     @Value("${com.smartecmx.postingbot.util.facebook.facebook_post_url}")
     private String facebookPostUrl;
@@ -39,13 +40,17 @@ public class FacebookUtil {
     @Value("${com.smartecmx.postingbot.util.facebook.app_secret}")
     private String appSecret;
 
+    private final TokenUtil tokenUtil;
+
     public String postFacebookFeed (String message, ByteArrayResource picture) throws PostingBotException {
         RestTemplate rest = new RestTemplate();
+
+        Token token = tokenUtil.getActiveTokenByType("page");
 
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("source", picture);
         params.add("message", message);
-        params.add("access_token", "access_token_placeholder"); // Replace with actual access token
+        params.add("access_token", token.getValue());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
