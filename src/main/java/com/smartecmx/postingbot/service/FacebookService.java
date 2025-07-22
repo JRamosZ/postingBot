@@ -2,7 +2,6 @@ package com.smartecmx.postingbot.service;
 
 import java.time.temporal.ChronoUnit;
 
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
 import com.smartecmx.postingbot.common.CommonMethod;
@@ -34,9 +33,9 @@ public class FacebookService {
     public String postMemeToFacebook() throws PostingBotException {
         try {
             Meme memeToPublish = memeUtil.getMemeForFacebook();
-            ByteArrayResource memeUrl = imgflipUtil.createMeme(memeToPublish.getTemplateId(), memeToPublish.getMemeTexts());
+            String memeUrl = imgflipUtil.createMeme(memeToPublish.getTemplateId(), memeToPublish.getMemeTexts());
             String postId = facebookUtil.postFacebookFeed(memeToPublish.getPostHeader(), memeUrl);
-            memeUtil.updateMemePublishedAtFacebook(memeToPublish.getId(), CommonMethod.getCurrentDateTime());
+            memeUtil.updateMemePublished("Facebook", memeToPublish.getId());
             return postId;
         } catch (Exception e) {
             emailService.sendFacebookPostErrorEmail(e.getMessage());

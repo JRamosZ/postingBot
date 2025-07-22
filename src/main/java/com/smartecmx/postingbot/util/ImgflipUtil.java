@@ -1,7 +1,6 @@
 package com.smartecmx.postingbot.util;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ public class ImgflipUtil {
     @Value("${com.smartecmx.postingbot.util.imgflip.imgflip_password}")
     private String imgflipPassword;
     
-    public ByteArrayResource createMeme(String templateId, String[] texts) throws ImgflipException {
+    public String createMeme(String templateId, String[] texts) throws ImgflipException {
         RestTemplate restTemplate = new RestTemplate();
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -52,14 +51,7 @@ public class ImgflipUtil {
             throw new ImgflipException("Failed to create meme: " + response.getStatusCode());
         }
         
-        byte[] imageBytes = restTemplate.getForObject(response.getBody().getData().getUrl(), byte[].class);
-        ByteArrayResource meme = new ByteArrayResource(imageBytes) {
-            @Override
-            public String getFilename() {
-                return "meme.jpg";
-            }
-        };
-        return meme;
+        return response.getBody().getData().getUrl();
     }
 
 }
