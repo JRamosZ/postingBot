@@ -42,13 +42,17 @@ public class FacebookUtil {
 
     private final TokenUtil tokenUtil;
 
-    public String postFacebookFeed (String message, ByteArrayResource picture) throws PostingBotException {
+    public String postFacebookFeed (String message, String pictureUrl) throws PostingBotException {
         RestTemplate rest = new RestTemplate();
 
         Token token = tokenUtil.getActiveTokenByType("page");
+        byte[] imageBytes = rest.getForObject(pictureUrl, byte[].class);
 
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("source", picture);
+        params.add("source", new ByteArrayResource(imageBytes) {
+            @Override
+            public String getFilename() { return "meme.jpg"; }
+        });
         params.add("message", message);
         params.add("access_token", token.getValue());
 

@@ -30,15 +30,15 @@ public class EmailService {
         emailUtil.sendBasicNotificationEmail(subject, bodyText);
     }
 
-    public void sendRunningOutOfMemesEmail() {
-        String subject = "Running Out of Memes for Facebook";
-        String bodyText = "The bot is running out of memes to post on Facebook. Please add more memes to the database to ensure continuous posting.";
+    public void sendRunningOutOfMemesEmail(String platform) {
+        String subject = String.format("Running Out of Memes for %s", platform);
+        String bodyText = String.format("The bot is running out of memes to post on %s. Please add more memes to the database to ensure continuous posting.", platform);
         emailUtil.sendBasicNotificationEmail(subject, bodyText);
     }
 
-    public void sendRanOutOfMemesToPostEmail() {
-        String subject = "Ran Out of Memes to Post on Facebook";
-        String bodyText = "The bot has run out of memes to post on Facebook. Please add more memes to the database to ensure continuous posting.";
+    public void sendRanOutOfMemesToPostEmail(String platform) {
+        String subject = String.format("Ran Out of Memes to Post on %s", platform);
+        String bodyText = String.format("The bot has run out of memes to post on %s. Please add more memes to the database to ensure continuous posting.", platform);
         emailUtil.sendBasicNotificationEmail(subject, bodyText);
     }
 
@@ -51,6 +51,12 @@ public class EmailService {
     public void sendFacebookPostErrorEmail(String errorMessage) {
         String subject = "Error Posting to Facebook";
         String bodyText = String.format("An error occurred while trying to post to Facebook: %s. Please check the bot's configuration and ensure it is functioning correctly.", errorMessage);
+        emailUtil.sendBasicNotificationEmail(subject, bodyText);
+    }
+
+    public void sendInstagramPostErrorEmail(String errorMessage) {
+        String subject = "Error Posting to Instagram";
+        String bodyText = String.format("An error occurred while trying to post to Instagram: %s. Please check the bot's configuration and ensure it is functioning correctly.", errorMessage);
         emailUtil.sendBasicNotificationEmail(subject, bodyText);
     }
     

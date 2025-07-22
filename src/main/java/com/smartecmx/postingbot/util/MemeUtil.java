@@ -1,11 +1,11 @@
 package com.smartecmx.postingbot.util;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
+import com.smartecmx.postingbot.common.CommonMethod;
 import com.smartecmx.postingbot.exception.NotFoundException;
 import com.smartecmx.postingbot.exception.PostingBotException;
 import com.smartecmx.postingbot.model.Meme;
@@ -24,11 +24,9 @@ public class MemeUtil {
     public Meme getMemeForFacebook() throws PostingBotException {
         List<Meme> memes = memeRepository.findAllByPublishedAtFacebookIsNull();
         if (memes.size() < 5) {
-            emailService.sendRunningOutOfMemesEmail();
-        } else if (memes.size() < 1) {
-            throw new NotFoundException("No memes found for Facebook");
+            emailService.sendRunningOutOfMemesEmail("Facebook");
         } else if (memes.isEmpty()) {
-            emailService.sendRanOutOfMemesToPostEmail();
+            emailService.sendRanOutOfMemesToPostEmail("Facebook");
             throw new NotFoundException("No memes found for Facebook");
         }
         return memes.get((int) (Math.random() * memes.size()));
@@ -36,15 +34,22 @@ public class MemeUtil {
 
     public Meme getMemeForInstagram() throws PostingBotException{
         List<Meme> memes = memeRepository.findAllByPublishedAtInstagramIsNull();
-        if (memes.isEmpty()) {
+        if (memes.size() < 5) {
+            emailService.sendRunningOutOfMemesEmail("Instagram");
+        } else if (memes.isEmpty()) {
+            emailService.sendRanOutOfMemesToPostEmail("Instagram");
             throw new NotFoundException("No memes found for Instagram");
         }
         return memes.get((int) (Math.random() * memes.size()));
     }
 
-    public void updateMemePublishedAtFacebook(UUID memeId, LocalDateTime publishedAt) throws PostingBotException {
+    public void updateMemePublished(String platform, UUID memeId) throws PostingBotException {
         Meme meme = memeRepository.findById(memeId).orElseThrow(() -> new NotFoundException("Meme not found with ID: " + memeId));
-        meme.setPublishedAtFacebook(publishedAt);
+        if (platform == "Facebook") {
+            meme.setPublishedAtFacebook(CommonMethod.getCurrentDateTime());
+        } else if (platform == "Instagram") {
+            meme.setPublishedAtInstagram(CommonMethod.getCurrentDateTime());
+        }
         memeRepository.save(meme);
     }
 
