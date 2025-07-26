@@ -66,3 +66,7 @@ com:
         mail:
           notifications_receiver: ${notificationsReceiver:notificationsReceiver}
           notifications_receiver_cc: ${notificationsReceiverCc:notificationsReceiverCc}
+        cloudinary:
+          cloud_name: ${cloudinaryCloudName:cloudinaryCloudName}
+          api_key: ${cloudinaryApiKey:cloudinaryApiKey}
+          api_secret: ${cloudinaryApiSecret:cloudinaryApiSecret}
