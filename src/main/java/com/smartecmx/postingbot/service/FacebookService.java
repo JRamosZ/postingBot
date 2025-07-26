@@ -28,13 +28,15 @@ public class FacebookService {
     private final FacebookUtil facebookUtil;
     private final TokenUtil tokenUtil;
     private final EmailService emailService;
+    private final CloudinaryService cloudinaryService;
     private static final Integer DEFAULT_TOKEN_DURATION_DAYS = 60; 
 
     public String postMemeToFacebook() throws PostingBotException {
         try {
             Meme memeToPublish = memeUtil.getMemeForFacebook();
             String memeUrl = imgflipUtil.createMeme(memeToPublish.getTemplateId(), memeToPublish.getMemeTexts());
-            String postId = facebookUtil.postFacebookFeed(memeToPublish.getPostHeader(), memeUrl);
+            String modifiedMemeUrl = cloudinaryService.uploadAndTransformMemeFromUrl(memeUrl, "meme_facebook_"+ memeToPublish.getId().toString());
+            String postId = facebookUtil.postFacebookFeed(memeToPublish.getPostHeader(), modifiedMemeUrl);
             memeUtil.updateMemePublished("Facebook", memeToPublish.getId());
             return postId;
         } catch (Exception e) {
