@@ -20,12 +20,14 @@ public class InstagramService {
     private final ImgflipUtil imgflipUtil;
     private final InstagramUtil instagramUtil;
     private final EmailService emailService;
+    private final CloudinaryService cloudinaryService;
 
     public String postMeme() throws PostingBotException {
         try {
             Meme memeToPublish = memeUtil.getMemeForInstagram();
-            Object memeUrl = imgflipUtil.createMeme(memeToPublish.getTemplateId(), memeToPublish.getMemeTexts());
-            InstagramCreateContainerResponse containerId = instagramUtil.createContainer((String) memeUrl, memeToPublish.getPostHeader());
+            String memeUrl = imgflipUtil.createMeme(memeToPublish.getTemplateId(), memeToPublish.getMemeTexts());
+            String modifiedMemeUrl = cloudinaryService.uploadAndTransformMemeFromUrl(memeUrl, "meme_instagram_"+ memeToPublish.getId().toString());
+            InstagramCreateContainerResponse containerId = instagramUtil.createContainer(modifiedMemeUrl, memeToPublish.getPostHeader());
             InstagramPostContainerResponse postId = instagramUtil.postContainer(containerId.getId());
             memeUtil.updateMemePublished("Instagram", memeToPublish.getId());
             return postId.getId();

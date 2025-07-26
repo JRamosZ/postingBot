@@ -70,3 +70,4 @@ com:
           cloud_name: ${cloudinaryCloudName:cloudinaryCloudName}
           api_key: ${cloudinaryApiKey:cloudinaryApiKey}
           api_secret: ${cloudinaryApiSecret:cloudinaryApiSecret}
+          logo_public_id: ${cloudinaryLogoPublicId:cloudinaryLogoPublicId}
