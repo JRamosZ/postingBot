@@ -11,7 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.smartecmx.postingbot.exception.FacebookException;
+import com.smartecmx.postingbot.exception.InstagramException;
 import com.smartecmx.postingbot.exception.PostingBotException;
 import com.smartecmx.postingbot.model.Token;
 import com.smartecmx.postingbot.model.Responses.InstagramCreateContainerResponse;
@@ -49,7 +49,7 @@ public class InstagramUtil {
         ResponseEntity<InstagramCreateContainerResponse> response = rest.postForEntity(createContainerUrl, request, InstagramCreateContainerResponse.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new FacebookException("Failed to post to Instagram: " + response.getBody());
+            throw new InstagramException("Failed to post to Instagram: " + response.getBody());
         }
 
         return response.getBody();
@@ -72,7 +72,7 @@ public class InstagramUtil {
         ResponseEntity<InstagramPostContainerResponse> response = rest.postForEntity(publishContainerUrl, request, InstagramPostContainerResponse.class);
         
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new FacebookException("Failed to post to Instagram: " + response.getBody());
+            throw new InstagramException("Failed to post to Instagram: " + response.getBody());
         }
         return response.getBody();
     }

@@ -48,24 +48,26 @@ com:
       util:
         imgflip:
           imgflip_url: ${imgflipUrl:https://api.imgflip.com/caption_image}
-          imgflip_username: ${imgflipUsername:imflipUsername}
+          imgflip_username: ${imgflipUsername:imgflipUsername}
           imgflip_password: ${imgflipPassword:imgflipPassword}
-        facebook:
-          api_version: ${facebookApiVersion:v23.0}
-          app_id: ${facebookAppId:facebookAppId}
-          app_secret: ${facebookAppSecret:facebookAppSecret}
-          page_id: ${facebookPageId:page_id}
-          get_personal_long_life_token_url: ${getPersonalLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/oauth/access_token}
-          get_page_long_life_token_url: ${getPageLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/me/accounts}
-          facebook_post_url: ${facebookPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/photos}
+        meta:
+          api_version: ${metaApiVersion:v23.0}
+          app_id: ${metaAppId:metaAppId}
+          app_secret: ${metaAppSecret:app_secret}
+          get_personal_long_life_token_url: ${getPersonalLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/oauth/access_token}
+          get_page_long_life_token_url: ${getPageLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/me/accounts}
           debug_token_url: ${debugTokenUrl:https://graph.facebook.com/debug_token}
+        facebook:
+          page_id: ${facebookPageId:facebookPageId}
+          facebook_post_url: ${facebookPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/photos}
         instagram:
           business_account_id: ${instagramBusinessAccountId:instagramBusinessAccountId}
-          create_container_url: ${instagramCreateContainerUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/${com.smartecmx.postingbot.util.instagram.business_account_id}/media}
-          publish_container_url: ${instagramPublishContainerUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.facebook.api_version}/${com.smartecmx.postingbot.util.instagram.business_account_id}/media_publish}
+          create_container_url: ${instagramCreateContainerUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.instagram.business_account_id}/media}
+          publish_container_url: ${instagramPublishContainerUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.instagram.business_account_id}/media_publish}
         mail:
-          notifications_receiver: ${notificationsReceiver:notificationsReceiver}
-          notifications_receiver_cc: ${notificationsReceiverCc:notificationsReceiverCc}
+          send_mail: ${sendMail:false}
+          notifications_receiver: ${notificationsReceiver:notifications_receiver}
+          notifications_receiver_cc: ${notificationsReceiverCc:notifications_receiver_cc}
         cloudinary:
           cloud_name: ${cloudinaryCloudName:cloudinaryCloudName}
           api_key: ${cloudinaryApiKey:cloudinaryApiKey}

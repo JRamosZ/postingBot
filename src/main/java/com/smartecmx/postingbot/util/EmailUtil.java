@@ -31,6 +31,9 @@ public class EmailUtil {
     @Value("${spring.mail.username}")
     private String notificationsSender;
 
+    @Value("${com.smartecmx.postingbot.util.mail.send_mail}")
+    private String sendMail;
+
     public void sendBasicNotificationEmail(String subject, String bodyText) {
         try {
             String htmlTemplate = loadTemplate("templates/BaseNotificationEmail.html");
@@ -50,6 +53,10 @@ public class EmailUtil {
     }
 
     private void sendHtmlEmail(String subject, String htmlBody) {
+        if (!Boolean.parseBoolean(sendMail)) {
+            log.info("Email sending is disabled. Subject: " + subject);
+            return;
+        }
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

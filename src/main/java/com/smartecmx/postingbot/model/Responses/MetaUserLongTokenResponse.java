@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class FacebookUserLongTokenResponse {
+public class MetaUserLongTokenResponse {
     private String access_token;
     private String token_type;
     private String expires_in;
