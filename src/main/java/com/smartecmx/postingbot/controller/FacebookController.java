@@ -1,9 +1,6 @@
 package com.smartecmx.postingbot.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,12 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 public class FacebookController {
 
     private final FacebookService facebookService;
-
-    @GetMapping("/")
-    public String getFacebookStatus() {
-        log.info("Fetching Facebook status");
-        return "Facebook posting bot is running";
-    }
     
     @PostMapping("/postMeme")
     public ResponseEntity<String> postToFacebook() throws PostingBotException {
@@ -34,24 +25,5 @@ public class FacebookController {
             String postId = facebookService.postMemeToFacebook();
             log.info("Post to Facebook completed successfully");
             return ResponseEntity.ok("Meme posted to Facebook successfully, ID: " + postId);
-
     }
-
-    @PostMapping("/getNewPageLongToken/{userShortToken}")
-    public ResponseEntity<String> getNewPageLongToken(@PathVariable("userShortToken") String userShortToken) throws PostingBotException {
-        log.info("Fetching new page long token for Facebook");
-        facebookService.getNewPageLongToken(userShortToken);
-        log.info("New page long token fetched successfully");
-        return ResponseEntity.ok("New long page token fetched successfully");
-    }
-
-    @Scheduled(cron = "0 0 */12 * * *", zone = "America/Mexico_City")
-    @GetMapping("/tokenStatus")
-    public ResponseEntity<String> getTokenStatus() throws PostingBotException {
-        log.info("Getting token status for Facebook");
-        String tokenStatus = facebookService.getTokenStatus();
-        log.info("Token status fetched successfully: " + tokenStatus);
-        return ResponseEntity.ok("Token status: " + tokenStatus);
-    }
-
 }

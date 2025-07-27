@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class FacebookPageLongTokenResponse {
+public class MetaPageLongTokenResponse {
     private List<PageData> data;
     private Paging paging;
 

@@ -9,10 +9,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.smartecmx.postingbot.exception.MetaException;
 import com.smartecmx.postingbot.exception.NotFoundException;
 import com.smartecmx.postingbot.exception.PostingBotException;
 import com.smartecmx.postingbot.model.Token;
-import com.smartecmx.postingbot.model.Responses.FacebookDebugTokenResponse;
+import com.smartecmx.postingbot.model.Responses.MetaDebugTokenResponse;
 import com.smartecmx.postingbot.repository.TokenRepository;
 import com.smartecmx.postingbot.service.EmailService;
 
@@ -25,13 +26,13 @@ public class TokenUtil {
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
 
-    @Value("${com.smartecmx.postingbot.util.facebook.debug_token_url}")
+    @Value("${com.smartecmx.postingbot.util.meta.debug_token_url}")
     private String debugTokenUrl;
     
-    @Value("${com.smartecmx.postingbot.util.facebook.app_id}")
+    @Value("${com.smartecmx.postingbot.util.meta.app_id}")
     private String appId;
 
-    @Value("${com.smartecmx.postingbot.util.facebook.app_secret}")
+    @Value("${com.smartecmx.postingbot.util.meta.app_secret}")
     private String appSecret;
 
     public void saveToken(String tokenValue, String tokenType, LocalDate expiresAt) {
@@ -57,17 +58,17 @@ public class TokenUtil {
         
     }
 
-    public FacebookDebugTokenResponse debugToken(String tokenValue) {
+    public MetaDebugTokenResponse debugToken(String tokenValue) throws PostingBotException {
         RestTemplate restTemplate = new RestTemplate();
-        String url = debugTokenUrl;
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
+        
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(debugTokenUrl)
             .queryParam("input_token", tokenValue)
             .queryParam("access_token", appId + "|" + appSecret);
 
-        ResponseEntity<FacebookDebugTokenResponse> response = restTemplate.getForEntity(uriBuilder.toUriString(), FacebookDebugTokenResponse.class);
+        ResponseEntity<MetaDebugTokenResponse> response = restTemplate.getForEntity(uriBuilder.toUriString(), MetaDebugTokenResponse.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new RuntimeException("Failed to debug token: " + response.getBody());
+            throw new MetaException("Failed to debug token: " + response.getBody());
         }
         
         return response.getBody();

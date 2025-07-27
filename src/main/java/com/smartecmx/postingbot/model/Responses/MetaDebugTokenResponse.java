@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class FacebookDebugTokenResponse {
+public class MetaDebugTokenResponse {
     private Data data;
 
     @Setter
