@@ -40,17 +40,17 @@ This step is done **manually every ~60 days**, but only requires one API call on
 ### 🧭 Step 1: Generate the short-lived token manually
 
 1. Go to [Graph API Explorer](https://developers.facebook.com/tools/explorer)
-2. Select your app (`SmarTec Mx Bot`)
+2. Select your app (`Bot Automated Poster`)
 3. Ensure the following scopes are selected:
 
 ```
 pages_show_list
 business_management
+instagram_basic
+instagram_content_publish
 pages_read_engagement
-pages_manage_metadata
 pages_read_user_content
 pages_manage_posts
-public_profile
 ```
 
 4. Click **"Generate Access Token"**
@@ -63,7 +63,7 @@ public_profile
 Once you have the short-lived token, make the following request:
 
 ```
-GET http://localhost:8080/api/app/postingBot/v1/facebook/getNewPageLongToken/{short_lived_token}
+GET http://localhost:8080/api/app/postingBot/v1/meta/getNewPageLongToken/{short_lived_token}
 ```
 
 Replace `{short_lived_token}` with the actual token value.
@@ -79,7 +79,7 @@ Replace `{short_lived_token}` with the actual token value.
 
 ## 🧠 Additional Notes
 
-- `expires_at` may return `0` — this is expected. The backend calculates expiration based on `issued_at + 60 days`
+- `expires_at` may return `0` — this is expected. The backend calculates expiration based on `issued_at + 59 days`
 - If the long token becomes invalid or expires, logs will alert you
 - The system only works for the registered admin user
 
@@ -102,6 +102,14 @@ Replace `{short_lived_token}` with the actual token value.
 - Automated page token renewal via cron
 - Periodic validation of long-lived token
 - Internal dashboard to visualize token status
+
+---
+
+## 🤝 External Services
+
+- Gmail
+- Imgflip
+- Cloudinary
 
 ---
 
