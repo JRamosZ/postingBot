@@ -1,6 +1,7 @@
 package com.smartecmx.postingbot.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 public class FacebookController {
 
     private final FacebookService facebookService;
-    
+
+    @Scheduled(cron = "0 0 18 * * 5", zone = "America/Mexico_City")
     @PostMapping("/postMeme")
     public ResponseEntity<String> postToFacebook() throws PostingBotException {
             log.info("Initiating post to Facebook");
