@@ -1,6 +1,7 @@
 package com.smartecmx.postingbot.service;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -65,16 +66,16 @@ public class FacebookService {
                 textToSpeechUtil.generateSrtFromTimepoints(ttsResponse.getTimepoints(), curiousFact.getFactText(), curiousFactFolderPath, "subtitles_" + curiousFact.getId() + ".srt");
                 cloudinaryService.downloadRandomItemFromFolder(backgroundPicsFolder, curiousFactFolderPath, "backgroundImage_" + curiousFact.getId() + ".jpg");
                 cloudinaryService.downloadRandomItemFromFolder(backgroundSongsFolder, curiousFactFolderPath, "backgroundMusic_" + curiousFact.getId() + ".mp3");
-                ffmpegService.generateVideo(curiousFactFolderPath, "final_video_" + curiousFact.getId() + ".mp4");
+                ffmpegService.generateVideo(curiousFactFolderPath, "finalVideo_" + curiousFact.getId() + ".mp4");
             }
-            
-            // facebookUtil.postFacebookFeed(curiousFact.getPostHeader(), videoUrl);
+
+            String postId = facebookUtil.postFacebookVideo(curiousFact.getPostHeader(), Path.of(curiousFactFolderPath + "/finalVideo_" + curiousFact.getId() + ".mp4"));
             // curiousFactUtil.updateCuriousFactPublished("Facebook", curiousFact.getId());
+            return postId;
         } catch (Exception e) {
             // emailService.sendFacebookPostErrorEmail(e.getMessage());
             throw new PostingBotException("Failed to post curious fact to Facebook: " + e.getMessage());
         }
-        return "123";
     
     }
 

@@ -1,7 +1,10 @@
 package com.smartecmx.postingbot.util;
 
+import java.nio.file.Path;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,9 @@ import lombok.RequiredArgsConstructor;
 public class FacebookUtil {
     @Value("${com.smartecmx.postingbot.util.facebook.facebook_post_url}")
     private String facebookPostUrl;
+
+    @Value("${com.smartecmx.postingbot.util.facebook.facebook_video_post_url}")
+    private String facebookVideoPostUrl;
 
     private final TokenUtil tokenUtil;
 
@@ -54,4 +60,26 @@ public class FacebookUtil {
         return response.getBody().getId();
     }
 
+    public String postFacebookVideo(String message, Path videoPath) throws PostingBotException {
+        RestTemplate rest = new RestTemplate();
+
+        Token token = tokenUtil.getActiveTokenByType("page");
+
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("video_file", new FileSystemResource(videoPath.toString()));
+        params.add("description", "description: " + message);
+        params.add("access_token", token.getValue());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(params, headers);
+
+        ResponseEntity<FacebookPostResponse> response = rest.postForEntity(facebookVideoPostUrl, request, FacebookPostResponse.class);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new FacebookException("Failed to post to Facebook: " + response.getBody());
+        }
+        return response.getBody().getId();
+    }
 }

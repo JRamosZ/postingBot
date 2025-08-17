@@ -35,7 +35,7 @@ public class FFMpegService {
         FFprobe ffprobe = new FFprobe("ffprobe");
         double speechLenght = ffprobe.probe(speechPath.toString()).getFormat().duration + EXTRA_VIDEO_DURATION;
 
-        Path videoFinalPath = Path.of(destinationPathFolder, "finalVideo_" + fileId + ".mp4");
+        Path videoFinalPath = Path.of(destinationPathFolder, fileName);
 
         String subtitlesFilter = subtitlesPath.toString().replace("\\", "\\\\");
         if (subtitlesFilter.contains(" ")) {
@@ -48,8 +48,8 @@ public class FFMpegService {
             "[2:a]volume=0.3[bgmusic];" +
             "[voice][bgmusic]amix=inputs=2:duration=longest[mix];" +
             "[mix]afade=t=out:st=%.2f:d=2[audio];" +
-            "[vf][3:v]overlay=main_w-overlay_w-30:30[with_logo];" +
-            "[with_logo]subtitles=%s:force_style='FontSize=22,PrimaryColour=&HFFFFFF&'[final_video]",
+            "[vf][3:v]overlay=main_w-overlay_w-50:50[with_logo];" +
+            "[with_logo]subtitles=%s:force_style='FontSize=18,PrimaryColour=&HFFFFFF&'[final_video]",
             speechLenght,
             (speechLenght - EXTRA_VIDEO_DURATION),
             (speechLenght - EXTRA_VIDEO_DURATION),

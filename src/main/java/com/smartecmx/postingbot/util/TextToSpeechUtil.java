@@ -127,11 +127,11 @@ public class TextToSpeechUtil {
 
             if (word.matches(".*[.!?]$")) {
                 closeBlock = true;
-                offset = 0.6;
+                offset = 0.7;
             }
             else if (word.matches(".*[,:]$")) {
                 closeBlock = true;
-                offset = 0.3;
+                offset = 0.35;
             }
             else if (wordsBuffer.size() >= 5) {
                 closeBlock = true;
