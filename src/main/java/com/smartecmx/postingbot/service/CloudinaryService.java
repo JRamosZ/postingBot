@@ -1,6 +1,8 @@
 package com.smartecmx.postingbot.service;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -92,4 +94,14 @@ public class CloudinaryService {
         String transform = "w_150,o_80,e_brightness:10";
         return String.format("https://res.cloudinary.com/%s/image/upload/%s/%s.%s", cloudName, transform, logoPublicId, extension);
     }
+
+    public String uploadVideo(Path videoPath) throws Exception {
+        File videoFile = videoPath.toFile();
+        Map <String, Object> uploadResult = cloudinary.uploader().uploadLarge(videoFile, ObjectUtils.asMap(
+                "resource_type", "video",
+                "folder", "curiousFacts",
+                "public_id", videoFile.getName().replace(".mp4", "")
+        ));
+    return uploadResult.get("secure_url").toString();
+}
 }

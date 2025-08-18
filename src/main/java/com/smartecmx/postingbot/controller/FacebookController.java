@@ -29,6 +29,7 @@ public class FacebookController {
             return ResponseEntity.ok("Meme posted to Facebook successfully, ID: " + postId);
     }
 
+    @Scheduled(cron = "0 0 12 * * 2", zone = "America/Mexico_City")
     @PostMapping("/postCuriousFact")
     public ResponseEntity<String> postCuriousFact() throws PostingBotException {
         log.info("Initiating post of curious fact to Facebook");

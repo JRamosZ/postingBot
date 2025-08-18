@@ -67,7 +67,7 @@ public class FacebookUtil {
         return response.getBody().getId();
     }
 
-    public String postFacebookVideo(String message, Path videoPath) throws PostingBotException, IOException {
+    public String postFacebookReel(String message, Path videoPath) throws PostingBotException, IOException {
         RestTemplate rest = new RestTemplate();
 
         Token token = tokenUtil.getActiveTokenByType("page");

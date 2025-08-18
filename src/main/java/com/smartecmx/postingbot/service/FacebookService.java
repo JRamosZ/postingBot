@@ -69,11 +69,11 @@ public class FacebookService {
                 ffmpegService.generateVideo(curiousFactFolderPath, "finalVideo_" + curiousFact.getId() + ".mp4");
             }
 
-            String postId = facebookUtil.postFacebookVideo(curiousFact.getPostHeader(), Path.of(curiousFactFolderPath + "/finalVideo_" + curiousFact.getId() + ".mp4"));
-            // curiousFactUtil.updateCuriousFactPublished("Facebook", curiousFact.getId());
+            String postId = facebookUtil.postFacebookReel(curiousFact.getPostHeader(), Path.of(curiousFactFolderPath + "/finalVideo_" + curiousFact.getId() + ".mp4"));
+            curiousFactUtil.updateCuriousFactPublished("Facebook", curiousFact.getId());
             return postId;
         } catch (Exception e) {
-            // emailService.sendFacebookPostErrorEmail(e.getMessage());
+            emailService.sendFacebookPostErrorEmail(e.getMessage());
             throw new PostingBotException("Failed to post curious fact to Facebook: " + e.getMessage());
         }
     

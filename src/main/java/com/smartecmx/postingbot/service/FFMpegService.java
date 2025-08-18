@@ -48,8 +48,8 @@ public class FFMpegService {
             "[2:a]volume=0.3[bgmusic];" +
             "[voice][bgmusic]amix=inputs=2:duration=longest[mix];" +
             "[mix]afade=t=out:st=%.2f:d=2[audio];" +
-            "[vf][3:v]overlay=main_w-overlay_w-50:50[with_logo];" +
-            "[with_logo]subtitles=%s:force_style='FontSize=18,PrimaryColour=&HFFFFFF&'[final_video]",
+            "[vf][3:v]overlay=main_w-overlay_w-90:60[with_logo];" +
+            "[with_logo]subtitles=%s:force_style='FontSize=15,BorderStyle=3,BackColour=&H00008F39&,PrimaryColour=&HFFFFFF&'[final_video]",
             speechLenght,
             (speechLenght - EXTRA_VIDEO_DURATION),
             (speechLenght - EXTRA_VIDEO_DURATION),
@@ -75,32 +75,39 @@ public class FFMpegService {
 
         new FFmpegExecutor(ffmpeg, ffprobe).createJob(builder).run();
 
+        Path introsDir = Path.of(STATIC_RESOURCE_PATH_VIDEOS, "Intros");
+        Path randomIntro;
+        try (var filesStream = Files.list(introsDir)) {
+            var introVideos = filesStream.filter(Files::isRegularFile).toList();
+            randomIntro = introVideos.get((int) (Math.random() * introVideos.size()));
+        }
         Path followUsVideoPath = Path.of(STATIC_RESOURCE_PATH_VIDEOS, "Follow_Us.mp4");
-        concatVideos(videoFinalPath, followUsVideoPath);
+        concatVideos(randomIntro, videoFinalPath, followUsVideoPath);
         log.info("Video generated successfully at: " + videoFinalPath.toString());
-
     }
 
-    public void concatVideos(Path video1Path, Path video2Path) throws IOException {
+    public void concatVideos(Path introVideoPath, Path generatedVideoPath, Path outroVideoPath) throws IOException {
         FFmpeg ffmpeg = new FFmpeg("ffmpeg");
         FFprobe ffprobe = new FFprobe("ffprobe");
 
-        Path temporayOutputPath = Path.of(video1Path.getParent().toString(), "temp_" + video1Path.getFileName().toString());
+        Path temporayOutputPath = Path.of(generatedVideoPath.getParent().toString(), "temp_" + generatedVideoPath.getFileName().toString());
 
-        normalizeVideo(video1Path);
-        normalizeVideo(video2Path);
+        normalizeVideo(introVideoPath);
+        normalizeVideo(generatedVideoPath);
+        normalizeVideo(outroVideoPath);
 
         FFmpegBuilder builder = new FFmpegBuilder()
-                .addInput(video1Path.toString())
-                .addInput(video2Path.toString())
-                .setComplexFilter("[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[outv][outa]")
+                .addInput(introVideoPath.toString())
+                .addInput(generatedVideoPath.toString())
+                .addInput(outroVideoPath.toString())
+                .setComplexFilter("[0:v][0:a][1:v][1:a][2:v][2:a]concat=n=3:v=1:a=1[outv][outa]")
                 .addOutput(temporayOutputPath.toString())
                 .addExtraArgs("-map", "[outv]", "-map", "[outa]")
                 .done();
 
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
         executor.createJob(builder).run();
-        Files.move(temporayOutputPath, video1Path, StandardCopyOption.REPLACE_EXISTING);
+        Files.move(temporayOutputPath, generatedVideoPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
     private void normalizeVideo(Path filePath) throws IOException {
