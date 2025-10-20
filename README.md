@@ -1,12 +1,13 @@
 # 🔧 AutoPoster Backend - SmarTec Mx
 
-This service automates the posting of memes and promotional content to the Facebook and Instagram pages of **SmarTec Mx**, a tech-oriented auto repair shop. It is developed in Java with Spring Boot 3 following a clean architecture pattern. It uses the Imgflip API to generate memes and the Meta Graph API to publish them automatically several times per week.
+This service automates the posting of memes and promotional content to the Facebook and Instagram pages of **SmarTec Mx**, a tech-oriented auto repair shop. It is developed in Java with Spring Boot 3 following a clean architecture pattern. It uses the Imgflip API to generate memes, Google TTS API and FFmpeg to generate videos, and the Meta Graph API to publish them automatically several times per week.
 
 ---
 
 ## 🚀 Features
 
 - Automatic meme generation with custom text
+- Automatic video with curious data generation with AI generated text
 - Automated posting to Facebook and Instagram
 - Token and expiration tracking stored in PostgreSQL
 - Scheduled posting via cron jobs
@@ -44,6 +45,7 @@ This step is done **manually every ~60 days**, but only requires one API call on
 3. Ensure the following scopes are selected:
 
 ```
+publish_video
 pages_show_list
 business_management
 instagram_basic
@@ -92,16 +94,18 @@ Replace `{short_lived_token}` with the actual token value.
 - PostgreSQL
 - RESTTemplate
 - Docker
+- FFmpeg
 - Imgflip API
+- Google TTS API
 - Facebook Graph API v23.0
 
 ---
 
 ## 📌 To-Do
 
-- Automated page token renewal via cron
-- Periodic validation of long-lived token
-- Internal dashboard to visualize token status
+- Creation of technical advice post
+- Dockerfile (considering the FFmpeg installation)
+- Review version v24.0 from Facebook Graph API to see compatibility
 
 ---
 
@@ -109,6 +113,7 @@ Replace `{short_lived_token}` with the actual token value.
 
 - Gmail
 - Imgflip
+- Google TTS
 - Cloudinary
 
 ---

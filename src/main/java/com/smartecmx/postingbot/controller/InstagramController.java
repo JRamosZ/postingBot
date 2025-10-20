@@ -25,7 +25,7 @@ public class InstagramController {
     
     @Scheduled(cron = "0 30 12 * * 5", zone = "America/Mexico_City")
     @PostMapping("/postMeme")
-    public ResponseEntity<String> postToInstagram() throws PostingBotException {
+    public ResponseEntity<String> postMeme() throws PostingBotException {
             log.info("Initiating post to Instagram");
             String postId = instagramService.postMeme();
             log.info("Meme posted to Instagram successfully, ID: " + postId);
@@ -36,7 +36,7 @@ public class InstagramController {
     @Scheduled(cron = "00 54 00 * * 1", zone = "America/Mexico_City")
     @PostMapping("/postCuriousFact")
     public ResponseEntity<String> postCuriousFact() throws PostingBotException {
-        log.info("Initiating post of curious fact to Facebook");
+        log.info("Initiating post of curious fact to Instagram");
         String postId = instagramService.postCuriousFact();
         log.info("Curious fact posted to Instagram successfully, ID: " + postId);
         return ResponseEntity.ok("Curious fact posted to Instagram successfully, ID: " + postId);

@@ -62,24 +62,25 @@ public class InstagramService {
 
         public String postCuriousFact() throws PostingBotException {
         try {
-            CuriousFact curiousFact = curiousFactUtil.getCuriousFactForFacebook();
+            CuriousFact curiousFact = curiousFactUtil.getCuriousFactForInstagram();
 
             String curiousFactFolderPath = CURIOUS_FACTS_FOLDER + "/" + curiousFact.getId();
             File curiousFactFolder = new File(curiousFactFolderPath);
-            if (!curiousFactFolder.exists()) {
-                GoogleTtsResponse ttsResponse = textToSpeechUtil.getGoogleTtsResponse(curiousFact.getFactText());
-                textToSpeechUtil.generateSpeechFile(ttsResponse.getAudioContent(), curiousFactFolderPath, "speech_" + curiousFact.getId() + ".mp3");
-                textToSpeechUtil.generateSrtFromTimepoints(ttsResponse.getTimepoints(), curiousFact.getFactText(), curiousFactFolderPath, "subtitles_" + curiousFact.getId() + ".srt");
-                cloudinaryService.downloadRandomItemFromFolder(backgroundPicsFolder, curiousFactFolderPath, "backgroundImage_" + curiousFact.getId() + ".jpg");
-                cloudinaryService.downloadRandomItemFromFolder(backgroundSongsFolder, curiousFactFolderPath, "backgroundMusic_" + curiousFact.getId() + ".mp3");
-                ffmpegService.generateVideo(curiousFactFolderPath, "finalVideo_" + curiousFact.getId() + ".mp4");
-            }
+
+            GoogleTtsResponse ttsResponse = textToSpeechUtil.getGoogleTtsResponse(curiousFact.getFactText());
+            textToSpeechUtil.generateSpeechFile(ttsResponse.getAudioContent(), curiousFactFolderPath, "speech_" + curiousFact.getId() + ".mp3");
+            textToSpeechUtil.generateSrtFromTimepoints(ttsResponse.getTimepoints(), curiousFact.getFactText(), curiousFactFolderPath, "subtitles_" + curiousFact.getId() + ".srt");
+            cloudinaryService.downloadRandomItemFromFolder(backgroundPicsFolder, curiousFactFolderPath, "backgroundImage_" + curiousFact.getId() + ".jpg");
+            cloudinaryService.downloadRandomItemFromFolder(backgroundSongsFolder, curiousFactFolderPath, "backgroundMusic_" + curiousFact.getId() + ".mp3");
+            ffmpegService.generateVideo(curiousFactFolderPath, "finalVideo_" + curiousFact.getId() + ".mp4");
+
             String videoUrl = cloudinaryService.uploadVideo(Path.of(curiousFactFolderPath + "/finalVideo_" + curiousFact.getId() + ".mp4"));
             InstagramCreateContainerResponse containerId = instagramUtil.createContainerForReel(videoUrl, curiousFact.getPostHeader());
             instagramUtil.validateContainerAvailability(containerId.getId());
             log.info("Container validated successfully, producing post");
             InstagramPostContainerResponse postId = instagramUtil.postContainer(containerId.getId());
             curiousFactUtil.updateCuriousFactPublished("Instagram", curiousFact.getId());
+            curiousFactUtil.deleteDirectoryRecursively(curiousFactFolder);
             return postId.getId();
         } catch (Exception e) {
             emailService.sendInstagramPostErrorEmail(e.getMessage());

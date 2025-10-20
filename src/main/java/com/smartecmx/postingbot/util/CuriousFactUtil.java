@@ -1,5 +1,6 @@
 package com.smartecmx.postingbot.util;
 
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,10 +23,10 @@ public class CuriousFactUtil {
 
     public CuriousFact getCuriousFactForFacebook() throws PostingBotException {
         List<CuriousFact> curiousFacts = curiousFactRepository.findAllByPublishedAtFacebookIsNull();
-        if (curiousFacts.size() < 5) {
-            // emailService.sendRunningOutOfMemesEmail("Facebook");
-        } else if (curiousFacts.isEmpty()) {
-            // emailService.sendRanOutOfMemesToPostEmail("Facebook");
+        if (curiousFacts.size() < 5 && curiousFacts.size() > 0) {
+            emailService.sendRunningOutOfCuriousFactsEmail("Facebook");
+        } else if (curiousFacts.size() == 0) {
+            emailService.sendRanOutOfCuriousFactsToPostEmail("Facebook");
             throw new NotFoundException("No Curious Fact found for Facebook");
         }
         return curiousFacts.get((int) (Math.random() * curiousFacts.size()));
@@ -33,10 +34,10 @@ public class CuriousFactUtil {
 
     public CuriousFact getCuriousFactForInstagram() throws PostingBotException{
         List<CuriousFact> curiousFact = curiousFactRepository.findAllByPublishedAtInstagramIsNull();
-        if (curiousFact.size() < 5) {
-            // emailService.sendRunningOutOfMemesEmail("Instagram");
-        } else if (curiousFact.isEmpty()) {
-            // emailService.sendRanOutOfMemesToPostEmail("Instagram");
+        if (curiousFact.size() < 5 && curiousFact.size() > 0) {
+            emailService.sendRunningOutOfCuriousFactsEmail("Instagram");
+        } else if (curiousFact.size() == 0) {
+            emailService.sendRanOutOfCuriousFactsToPostEmail("Instagram");
             throw new NotFoundException("No Curious Fact found for Instagram");
         }
         return curiousFact.get((int) (Math.random() * curiousFact.size()));
@@ -49,6 +50,23 @@ public class CuriousFactUtil {
         } else if (platform == "Instagram") {
             curiousFact.setPublishedAtInstagram(CommonMethod.getCurrentDateTime());
         }
+        curiousFact.setUpdatedAt(CommonMethod.getCurrentDateTime());
         curiousFactRepository.save(curiousFact);
+    }
+
+    public void deleteDirectoryRecursively(File curiousFactFolder) {
+        if (curiousFactFolder != null && curiousFactFolder.exists()) {
+            File[] files = curiousFactFolder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectoryRecursively(file);
+                    } else {
+                        file.delete();
+                    }
+                }
+            }
+            curiousFactFolder.delete();
+        }
     }
 }

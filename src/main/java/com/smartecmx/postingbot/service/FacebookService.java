@@ -60,17 +60,17 @@ public class FacebookService {
 
             String curiousFactFolderPath = CURIOUS_FACTS_FOLDER + "/" + curiousFact.getId();
             File curiousFactFolder = new File(curiousFactFolderPath);
-            if (!curiousFactFolder.exists()) {
-                GoogleTtsResponse ttsResponse = textToSpeechUtil.getGoogleTtsResponse(curiousFact.getFactText());
-                textToSpeechUtil.generateSpeechFile(ttsResponse.getAudioContent(), curiousFactFolderPath, "speech_" + curiousFact.getId() + ".mp3");
-                textToSpeechUtil.generateSrtFromTimepoints(ttsResponse.getTimepoints(), curiousFact.getFactText(), curiousFactFolderPath, "subtitles_" + curiousFact.getId() + ".srt");
-                cloudinaryService.downloadRandomItemFromFolder(backgroundPicsFolder, curiousFactFolderPath, "backgroundImage_" + curiousFact.getId() + ".jpg");
-                cloudinaryService.downloadRandomItemFromFolder(backgroundSongsFolder, curiousFactFolderPath, "backgroundMusic_" + curiousFact.getId() + ".mp3");
-                ffmpegService.generateVideo(curiousFactFolderPath, "finalVideo_" + curiousFact.getId() + ".mp4");
-            }
+
+            GoogleTtsResponse ttsResponse = textToSpeechUtil.getGoogleTtsResponse(curiousFact.getFactText());
+            textToSpeechUtil.generateSpeechFile(ttsResponse.getAudioContent(), curiousFactFolderPath, "speech_" + curiousFact.getId() + ".mp3");
+            textToSpeechUtil.generateSrtFromTimepoints(ttsResponse.getTimepoints(), curiousFact.getFactText(), curiousFactFolderPath, "subtitles_" + curiousFact.getId() + ".srt");
+            cloudinaryService.downloadRandomItemFromFolder(backgroundPicsFolder, curiousFactFolderPath, "backgroundImage_" + curiousFact.getId() + ".jpg");
+            cloudinaryService.downloadRandomItemFromFolder(backgroundSongsFolder, curiousFactFolderPath, "backgroundMusic_" + curiousFact.getId() + ".mp3");
+            ffmpegService.generateVideo(curiousFactFolderPath, "finalVideo_" + curiousFact.getId() + ".mp4");
 
             String postId = facebookUtil.postFacebookReel(curiousFact.getPostHeader(), Path.of(curiousFactFolderPath + "/finalVideo_" + curiousFact.getId() + ".mp4"));
             curiousFactUtil.updateCuriousFactPublished("Facebook", curiousFact.getId());
+            curiousFactUtil.deleteDirectoryRecursively(curiousFactFolder);
             return postId;
         } catch (Exception e) {
             emailService.sendFacebookPostErrorEmail(e.getMessage());

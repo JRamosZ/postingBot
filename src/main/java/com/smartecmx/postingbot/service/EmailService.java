@@ -36,9 +36,21 @@ public class EmailService {
         emailUtil.sendBasicNotificationEmail(subject, bodyText);
     }
 
+    public void sendRunningOutOfCuriousFactsEmail(String platform) {
+        String subject = String.format("Running Out of Curious Facts for %s", platform);
+        String bodyText = String.format("The bot is running out of curious facts to post on %s. Please add more curious facts to the database to ensure continuous posting.", platform);
+        emailUtil.sendBasicNotificationEmail(subject, bodyText);
+    }
+
     public void sendRanOutOfMemesToPostEmail(String platform) {
         String subject = String.format("Ran Out of Memes to Post on %s", platform);
         String bodyText = String.format("The bot has run out of memes to post on %s. Please add more memes to the database to ensure continuous posting.", platform);
+        emailUtil.sendBasicNotificationEmail(subject, bodyText);
+    }
+
+    public void sendRanOutOfCuriousFactsToPostEmail(String platform) {
+        String subject = String.format("Ran Out of Curious Facts to Post on %s", platform);
+        String bodyText = String.format("The bot has run out of curious facts to post on %s. Please add more curious facts to the database to ensure continuous posting.", platform);
         emailUtil.sendBasicNotificationEmail(subject, bodyText);
     }
 
