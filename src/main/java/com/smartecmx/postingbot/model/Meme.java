@@ -19,9 +19,6 @@ public class Meme extends AbstractPostBaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "post_header", nullable = false)
-    private String postHeader;
-
     @Column(name = "meme_texts", nullable = false)
     private String[] memeTexts;
 }

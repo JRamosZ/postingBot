@@ -20,4 +20,7 @@ public class AbstractPostBaseEntity extends AbstractBaseModelEntity {
     @Column(name = "published_at_instagram")
     private LocalDateTime publishedAtInstagram;
 
+    @Column(name = "post_header", nullable = false)
+    private String postHeader;
+
 }

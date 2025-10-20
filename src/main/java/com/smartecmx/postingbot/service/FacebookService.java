@@ -1,12 +1,20 @@
 package com.smartecmx.postingbot.service;
 
+import java.io.File;
+import java.nio.file.Path;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.smartecmx.postingbot.exception.PostingBotException;
+import com.smartecmx.postingbot.model.CuriousFact;
 import com.smartecmx.postingbot.model.Meme;
+import com.smartecmx.postingbot.model.Responses.GoogleTtsResponse;
+import com.smartecmx.postingbot.util.CuriousFactUtil;
 import com.smartecmx.postingbot.util.FacebookUtil;
 import com.smartecmx.postingbot.util.ImgflipUtil;
 import com.smartecmx.postingbot.util.MemeUtil;
+import com.smartecmx.postingbot.util.TextToSpeechUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,11 +22,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FacebookService {
     
+    @Value("${com.smartecmx.postingbot.util.cloudinary.background_pics_folder}")
+    private String backgroundPicsFolder;
+
+    @Value("${com.smartecmx.postingbot.util.cloudinary.background_songs_folder}")
+    private String backgroundSongsFolder;
+
+    private static final String CURIOUS_FACTS_FOLDER = "files/curiousFacts";
+
     private final MemeUtil memeUtil;
+    private final CuriousFactUtil curiousFactUtil;
     private final ImgflipUtil imgflipUtil;
     private final FacebookUtil facebookUtil;
+    private final TextToSpeechUtil textToSpeechUtil;
     private final EmailService emailService;
     private final CloudinaryService cloudinaryService;
+    private final FFMpegService ffmpegService;
 
     public String postMemeToFacebook() throws PostingBotException {
         try {
@@ -33,6 +52,31 @@ public class FacebookService {
             throw new PostingBotException("Failed to post meme to Facebook: " + e.getMessage());
         }
 
+    }
+
+    public String postCuriousFactToFacebook() throws PostingBotException {
+        try {
+            CuriousFact curiousFact = curiousFactUtil.getCuriousFactForFacebook();
+
+            String curiousFactFolderPath = CURIOUS_FACTS_FOLDER + "/" + curiousFact.getId();
+            File curiousFactFolder = new File(curiousFactFolderPath);
+
+            GoogleTtsResponse ttsResponse = textToSpeechUtil.getGoogleTtsResponse(curiousFact.getFactText());
+            textToSpeechUtil.generateSpeechFile(ttsResponse.getAudioContent(), curiousFactFolderPath, "speech_" + curiousFact.getId() + ".mp3");
+            textToSpeechUtil.generateSrtFromTimepoints(ttsResponse.getTimepoints(), curiousFact.getFactText(), curiousFactFolderPath, "subtitles_" + curiousFact.getId() + ".srt");
+            cloudinaryService.downloadRandomItemFromFolder(backgroundPicsFolder, curiousFactFolderPath, "backgroundImage_" + curiousFact.getId() + ".jpg");
+            cloudinaryService.downloadRandomItemFromFolder(backgroundSongsFolder, curiousFactFolderPath, "backgroundMusic_" + curiousFact.getId() + ".mp3");
+            ffmpegService.generateVideo(curiousFactFolderPath, "finalVideo_" + curiousFact.getId() + ".mp4");
+
+            String postId = facebookUtil.postFacebookReel(curiousFact.getPostHeader(), Path.of(curiousFactFolderPath + "/finalVideo_" + curiousFact.getId() + ".mp4"));
+            curiousFactUtil.updateCuriousFactPublished("Facebook", curiousFact.getId());
+            curiousFactUtil.deleteDirectoryRecursively(curiousFactFolder);
+            return postId;
+        } catch (Exception e) {
+            emailService.sendFacebookPostErrorEmail(e.getMessage());
+            throw new PostingBotException("Failed to post curious fact to Facebook: " + e.getMessage());
+        }
+    
     }
 
 }

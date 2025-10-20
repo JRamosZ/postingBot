@@ -22,10 +22,19 @@ public class FacebookController {
 
     @Scheduled(cron = "0 0 18 * * 5", zone = "America/Mexico_City")
     @PostMapping("/postMeme")
-    public ResponseEntity<String> postToFacebook() throws PostingBotException {
+    public ResponseEntity<String> postMeme() throws PostingBotException {
             log.info("Initiating post to Facebook");
             String postId = facebookService.postMemeToFacebook();
-            log.info("Post to Facebook completed successfully");
+            log.info("Meme posted to Facebook successfully, ID: " + postId);
             return ResponseEntity.ok("Meme posted to Facebook successfully, ID: " + postId);
+    }
+
+    @Scheduled(cron = "0 0 12 * * 2", zone = "America/Mexico_City")
+    @PostMapping("/postCuriousFact")
+    public ResponseEntity<String> postCuriousFact() throws PostingBotException {
+        log.info("Initiating post of curious fact to Facebook");
+        String postId = facebookService.postCuriousFactToFacebook();
+        log.info("Curious fact posted to Facebook successfully, ID: " + postId);
+        return ResponseEntity.ok("Curious fact posted to Facebook successfully, ID: " + postId);
     }
 }

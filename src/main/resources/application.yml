@@ -28,6 +28,7 @@ spring:
           use_jdbc_metadata: false
         ddl-auto: ${db_ddl_auto:none}
         globally_quoted_identifiers: false
+        format_sql: true
     show-sql: false
   sql:
     init:
@@ -42,6 +43,18 @@ server:
 logging:
   level:
     root: ${logging_level:INFO}
+
+google:
+  general:
+    apiKey: ${googleKey:googleKey}
+    language_code: ${googleLanguaje:es-US}
+    audio_encoding: ${googleAudioEncoding:MP3}
+  tts:
+    url: ${googleTtsUrl:https://texttospeech.googleapis.com/v1beta1/text:synthesize}
+    voice_name: ${googleTtsVoiceName:es-US-Standard-B}
+    speaking_rate: 1.0
+    pitch: 0
+
 com:
   smartecmx:
     postingbot:
@@ -57,9 +70,12 @@ com:
           get_personal_long_life_token_url: ${getPersonalLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/oauth/access_token}
           get_page_long_life_token_url: ${getPageLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/me/accounts}
           debug_token_url: ${debugTokenUrl:https://graph.facebook.com/debug_token}
+          base_api_url: ${baseApiUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}}
         facebook:
           page_id: ${facebookPageId:facebookPageId}
           facebook_post_url: ${facebookPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/photos}
+          facebook_video_post_url: ${facebookVideoPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/videos}
+          facebook_reels_post_url: ${facebookReelsPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/video_reels}
         instagram:
           business_account_id: ${instagramBusinessAccountId:instagramBusinessAccountId}
           create_container_url: ${instagramCreateContainerUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.instagram.business_account_id}/media}
@@ -73,3 +89,5 @@ com:
           api_key: ${cloudinaryApiKey:cloudinaryApiKey}
           api_secret: ${cloudinaryApiSecret:cloudinaryApiSecret}
           logo_public_id: ${cloudinaryLogoPublicId:cloudinaryLogoPublicId}
+          background_pics_folder: ${cloudinaryBackgroundPicsFolder:cloudinaryBackgroundPicsFolder}
+          background_songs_folder: ${cloudinaryBackgroundSongsFolder:cloudinaryBackgroundSongsFolder}

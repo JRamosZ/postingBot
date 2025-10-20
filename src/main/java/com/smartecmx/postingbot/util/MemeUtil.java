@@ -23,9 +23,9 @@ public class MemeUtil {
 
     public Meme getMemeForFacebook() throws PostingBotException {
         List<Meme> memes = memeRepository.findAllByPublishedAtFacebookIsNull();
-        if (memes.size() < 5) {
+        if (memes.size() < 5 && memes.size() > 0) {
             emailService.sendRunningOutOfMemesEmail("Facebook");
-        } else if (memes.isEmpty()) {
+        } else if (memes.size() == 0) {
             emailService.sendRanOutOfMemesToPostEmail("Facebook");
             throw new NotFoundException("No memes found for Facebook");
         }
@@ -34,9 +34,9 @@ public class MemeUtil {
 
     public Meme getMemeForInstagram() throws PostingBotException{
         List<Meme> memes = memeRepository.findAllByPublishedAtInstagramIsNull();
-        if (memes.size() < 5) {
+        if (memes.size() < 5 && memes.size() > 0) {
             emailService.sendRunningOutOfMemesEmail("Instagram");
-        } else if (memes.isEmpty()) {
+        } else if (memes.size() == 0) {
             emailService.sendRanOutOfMemesToPostEmail("Instagram");
             throw new NotFoundException("No memes found for Instagram");
         }
@@ -50,6 +50,7 @@ public class MemeUtil {
         } else if (platform == "Instagram") {
             meme.setPublishedAtInstagram(CommonMethod.getCurrentDateTime());
         }
+        meme.setUpdatedAt(CommonMethod.getCurrentDateTime());
         memeRepository.save(meme);
     }
 

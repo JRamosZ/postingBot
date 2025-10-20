@@ -1,23 +1,36 @@
 package com.smartecmx.postingbot.service;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
+import com.cloudinary.api.ApiResponse;
 import com.cloudinary.utils.ObjectUtils;
+import com.smartecmx.postingbot.common.CommonMethod;
+import com.smartecmx.postingbot.exception.CloudinaryException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CloudinaryService {
 
     @Value("${com.smartecmx.postingbot.util.cloudinary.logo_public_id}")
     private String logoPublicId;
+
+    @Value("${com.smartecmx.postingbot.util.cloudinary.cloud_name}")
+    private String cloudName;
 
     private final Cloudinary cloudinary;
 
@@ -43,4 +56,52 @@ public class CloudinaryService {
 
         return uploadResult.get("secure_url").toString();
     }
+
+    public void listFolders() throws Exception {
+        Map result = cloudinary.api().rootFolders(ObjectUtils.emptyMap());
+        List<Map<String, String>> folders = (List<Map<String, String>>) result.get("folders");
+
+        System.out.println("📂 Carpetas raíz:");
+        for (Map<String, String> folder : folders) {
+            System.out.println("- " + folder.get("name") + " (path: " + folder.get("path") + ")");
+        }
+    }
+
+    public void downloadRandomItemFromFolder(String sourceFolderName, String destinationFolder, String name ) throws Exception {
+
+        ApiResponse result = cloudinary.search()
+            .expression("folder:\"" + sourceFolderName + "\"")
+            .maxResults(100)
+            .execute();
+
+        List<Map<String, Object>> resources = (List<Map<String, Object>>) result.get("resources");
+
+        if (resources == null || resources.isEmpty()) {
+            throw new CloudinaryException("No items found in folder: " + sourceFolderName);
+        }
+
+        List<String> urls = resources.stream()
+                .map(resource -> (String) resource.get("secure_url"))
+                .collect(Collectors.toList());
+
+        Random random = new Random();
+        CommonMethod.downloadFile(destinationFolder, urls.get(random.nextInt(urls.size())), name);
+        log.info("File downloaded from Cloudinary: " + destinationFolder + "/" + name);
+    }
+
+    public String getSmartecLogoUrl(){
+        String extension = "png";
+        String transform = "w_150,o_80,e_brightness:10";
+        return String.format("https://res.cloudinary.com/%s/image/upload/%s/%s.%s", cloudName, transform, logoPublicId, extension);
+    }
+
+    public String uploadVideo(Path videoPath) throws Exception {
+        File videoFile = videoPath.toFile();
+        Map <String, Object> uploadResult = cloudinary.uploader().uploadLarge(videoFile, ObjectUtils.asMap(
+                "resource_type", "video",
+                "folder", "curiousFacts",
+                "public_id", videoFile.getName().replace(".mp4", "")
+        ));
+    return uploadResult.get("secure_url").toString();
+}
 }
