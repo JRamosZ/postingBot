@@ -37,4 +37,12 @@ public class FacebookController {
         log.info("Curious fact posted to Facebook successfully, ID: " + postId);
         return ResponseEntity.ok("Curious fact posted to Facebook successfully, ID: " + postId);
     }
+
+    @PostMapping("/postTechnicalTip")
+    public ResponseEntity<String> postTechnicalTip() throws PostingBotException {
+        log.info("Initiating post of technical tip to Facebook");
+        String postId = facebookService.postTechnicalTipToFacebook();
+        log.info("Technical tip posted to Facebook successfully, ID: " + postId);
+        return ResponseEntity.ok("Technical tip posted to Facebook successfully, ID: " + postId);
+    }
 }

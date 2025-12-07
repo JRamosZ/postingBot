@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.api.ApiResponse;
+import com.cloudinary.transformation.TextLayer;
 import com.cloudinary.utils.ObjectUtils;
 import com.smartecmx.postingbot.common.CommonMethod;
+import com.smartecmx.postingbot.common.OverlayConfig;
 import com.smartecmx.postingbot.exception.CloudinaryException;
 
 import lombok.RequiredArgsConstructor;
@@ -103,5 +105,78 @@ public class CloudinaryService {
                 "public_id", videoFile.getName().replace(".mp4", "")
         ));
     return uploadResult.get("secure_url").toString();
+    }
+
+    public Map<String, String> getRandomItemFromFolder(String folderName) throws Exception {
+
+        ApiResponse result = cloudinary.search()
+            .expression("folder:\"" + folderName + "\"")
+            .maxResults(100)
+            .execute();
+        List<Map<String, Object>> resources = (List<Map<String, Object>>) result.get("resources");
+        
+        if (resources == null || resources.isEmpty()) {
+            throw new CloudinaryException("No items found in folder: " + folderName);
+        }
+
+        Random random = new Random();
+        Map<String, Object> resource = resources.get(random.nextInt(resources.size()));
+        return resource.entrySet().stream()
+                .filter(entry -> entry.getValue() instanceof String)
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> (String) entry.getValue()
+                ));
+    }
+    
+public String generateTechnicalTipUrl(String publicIdTemplate, String textTip, OverlayConfig tipConfig, String textCTA, OverlayConfig ctaConfig) {
+
+    TextLayer tipLayer = new TextLayer()
+            .fontFamily(tipConfig.getFont())
+            .fontSize(tipConfig.getFontSize())
+            .fontWeight(tipConfig.getWeight())
+            .textAlign(tipConfig.getAlign())
+            .text(textTip);
+
+    TextLayer ctaLayer = new TextLayer()
+            .fontFamily(ctaConfig.getFont())
+            .fontSize(ctaConfig.getFontSize())
+            .fontWeight(ctaConfig.getWeight())
+            .textAlign(ctaConfig.getAlign())
+            .text(textCTA);
+
+    Transformation transformation = new Transformation()
+            .quality("auto")
+            .fetchFormat("auto")
+
+            // TIP
+            .overlay(tipLayer)
+            .color(tipConfig.getColorHex())
+            .gravity(tipConfig.getGravity())
+            .x(tipConfig.getX())
+            .y(tipConfig.getY())
+            .width(tipConfig.getMaxWidth())
+            .crop("fit")
+            .flags("layer_apply")
+            .chain()
+
+            // CTA
+            .overlay(ctaLayer)
+            .color(tipConfig.getColorHex())
+            .gravity(ctaConfig.getGravity())
+            .x(ctaConfig.getX())
+            .y(ctaConfig.getY())
+            .width(ctaConfig.getMaxWidth())
+            .crop("fit")
+            .flags("layer_apply");
+
+    String finalUrl = cloudinary.url()
+            .transformation(transformation)
+            .generate(publicIdTemplate);
+
+    return finalUrl;
 }
+
+
+
 }
