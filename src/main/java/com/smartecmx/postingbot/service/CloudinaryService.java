@@ -129,54 +129,38 @@ public class CloudinaryService {
                 ));
     }
     
-public String generateTechnicalTipUrl(String publicIdTemplate, String textTip, OverlayConfig tipConfig, String textCTA, OverlayConfig ctaConfig) {
+    public String generateTechnicalTip(String baseTemplatePublicId, String textTip, OverlayConfig tipConfig, String textCTA, OverlayConfig ctaConfig) throws Exception {
 
-    TextLayer tipLayer = new TextLayer()
-            .fontFamily(tipConfig.getFont())
-            .fontSize(tipConfig.getFontSize())
-            .fontWeight(tipConfig.getWeight())
-            .textAlign(tipConfig.getAlign())
-            .text(textTip);
+        TextLayer tipLayer = new TextLayer()
+                .fontFamily(tipConfig.getFont())
+                .fontSize(tipConfig.getFontSize())
+                .fontWeight(tipConfig.getWeight())
+                .textAlign(tipConfig.getAlign())
+                .text(textTip);
 
-    TextLayer ctaLayer = new TextLayer()
-            .fontFamily(ctaConfig.getFont())
-            .fontSize(ctaConfig.getFontSize())
-            .fontWeight(ctaConfig.getWeight())
-            .textAlign(ctaConfig.getAlign())
-            .text(textCTA);
+        Transformation tipTransformation = new Transformation()
+                .width(1080)
+                .crop("fit")
+                .overlay(tipLayer)
+                .color(tipConfig.getColorHex())
+                .gravity(tipConfig.getGravity())
+                .x(tipConfig.getX())
+                .y(tipConfig.getY())
+                .width(tipConfig.getMaxWidth())
+                .flags("layer_apply");
+        
+        String uploadResult = cloudinary.url()
+            .secure(true)
+            .transformation(tipTransformation)
+            .generate(baseTemplatePublicId);
 
-    Transformation transformation = new Transformation()
-            .quality("auto")
-            .fetchFormat("auto")
 
-            // TIP
-            .overlay(tipLayer)
-            .color(tipConfig.getColorHex())
-            .gravity(tipConfig.getGravity())
-            .x(tipConfig.getX())
-            .y(tipConfig.getY())
-            .width(tipConfig.getMaxWidth())
-            .crop("fit")
-            .flags("layer_apply")
-            .chain()
+        return uploadResult;
+    }
 
-            // CTA
-            .overlay(ctaLayer)
-            .color(tipConfig.getColorHex())
-            .gravity(ctaConfig.getGravity())
-            .x(ctaConfig.getX())
-            .y(ctaConfig.getY())
-            .width(ctaConfig.getMaxWidth())
-            .crop("fit")
-            .flags("layer_apply");
-
-    String finalUrl = cloudinary.url()
-            .transformation(transformation)
-            .generate(publicIdTemplate);
-
-    return finalUrl;
-}
-
+    public void deleteCloudinaryItem(String publicId) throws Exception {
+        cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+    }
 
 
 }

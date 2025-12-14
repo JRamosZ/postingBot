@@ -92,17 +92,19 @@ public class FacebookService {
         try {
             TechnicalTip technicalTip = technicalTipUtil.getTechnicalTipForFacebook();
              Map<String,String> technicalTipImage = cloudinaryService.getRandomItemFromFolder(technicalTipsFolder);
-            // String technicalTipName = technicalTipImage.get("filename");
-            String technicalTipName = "TechnicalTip_1_xayege";
+            String technicalTipName = technicalTipImage.get("filename");
+            //TODO Delete
+            technicalTipName = "TechnicalTip_1_xayege";
             Optional<OverlayConfig> overlayConfigEnum = OverlayConfig.fromFilename(technicalTipName);
-            //TODO Get CAT Overlay Config
-            if (overlayConfigEnum.isEmpty()) {
+            Optional<OverlayConfig> ctaOverlayConfigEnum = OverlayConfig.fromFilename(technicalTipName + "_CTA");
+            if (overlayConfigEnum.isEmpty() || ctaOverlayConfigEnum.isEmpty()) {
                 throw new PostingBotException("No overlay configuration found for technical tip image: " + technicalTipName);
             }
 
-            String finalImageUrl = cloudinaryService.generateTechnicalTipUrl(technicalTipName, technicalTip.getTipText(), overlayConfigEnum.get(), technicalTip.getCtaText(), overlayConfigEnum.get());
+            String techTipUrl = cloudinaryService.generateTechnicalTip(technicalTipName, technicalTip.getTipText(), overlayConfigEnum.get(), technicalTip.getCtaText(), ctaOverlayConfigEnum.get());
             //TODO Post to Facebook
-            return finalImageUrl;
+            //TODO Delete from Cloudinary the transient image
+            return techTipUrl;
         } catch (Exception e) {
             emailService.sendFacebookPostErrorEmail(e.getMessage());
             throw new PostingBotException("Failed to post technical tip to Facebook: " + e.getMessage());
