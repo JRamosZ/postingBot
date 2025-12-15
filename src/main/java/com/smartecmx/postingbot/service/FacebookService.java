@@ -93,8 +93,6 @@ public class FacebookService {
             TechnicalTip technicalTip = technicalTipUtil.getTechnicalTipForFacebook();
              Map<String,String> technicalTipImage = cloudinaryService.getRandomItemFromFolder(technicalTipsFolder);
             String technicalTipName = technicalTipImage.get("filename");
-            //TODO Delete
-            technicalTipName = "TechnicalTip_3_iqojsc";
             Optional<OverlayConfig> overlayConfigEnum = OverlayConfig.fromFilename(technicalTipName);
             Optional<OverlayConfig> ctaOverlayConfigEnum = OverlayConfig.fromFilename(technicalTipName + "_CTA");
             if (overlayConfigEnum.isEmpty() || ctaOverlayConfigEnum.isEmpty()) {
@@ -102,10 +100,10 @@ public class FacebookService {
             }
 
             Map techTip = cloudinaryService.generateTechnicalTip(technicalTipName, technicalTip.getTipText(), overlayConfigEnum.get(), technicalTip.getCtaText(), ctaOverlayConfigEnum.get());
-            //TODO Post to Facebook
-            // String postId = facebookUtil.postFacebookFeed(technicalTip.getPostHeader(), techTip.get("secure_url").toString());
-            // cloudinaryService.deleteCloudinaryItem(techTip.get("public_id").toString());
-            return techTip.get("secure_url").toString();
+            String postId = facebookUtil.postFacebookFeed(technicalTip.getPostHeader(), techTip.get("secure_url").toString());
+            cloudinaryService.deleteCloudinaryItem(techTip.get("public_id").toString());
+            technicalTipUtil.updateTechnicalTipPublished("Facebook", technicalTip.getId());
+            return postId;
         } catch (Exception e) {
             emailService.sendFacebookPostErrorEmail(e.getMessage());
             throw new PostingBotException("Failed to post technical tip to Facebook: " + e.getMessage());
