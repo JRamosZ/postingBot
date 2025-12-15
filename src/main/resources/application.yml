@@ -91,3 +91,4 @@ com:
           logo_public_id: ${cloudinaryLogoPublicId:cloudinaryLogoPublicId}
           background_pics_folder: ${cloudinaryBackgroundPicsFolder:cloudinaryBackgroundPicsFolder}
           background_songs_folder: ${cloudinaryBackgroundSongsFolder:cloudinaryBackgroundSongsFolder}
+          technical_tips_folder: ${cloudinaryTechnicalTipsFolder:TechnicalTips}

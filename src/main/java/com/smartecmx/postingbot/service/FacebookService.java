@@ -2,18 +2,23 @@ package com.smartecmx.postingbot.service;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.smartecmx.postingbot.common.OverlayConfig;
 import com.smartecmx.postingbot.exception.PostingBotException;
 import com.smartecmx.postingbot.model.CuriousFact;
 import com.smartecmx.postingbot.model.Meme;
+import com.smartecmx.postingbot.model.TechnicalTip;
 import com.smartecmx.postingbot.model.Responses.GoogleTtsResponse;
 import com.smartecmx.postingbot.util.CuriousFactUtil;
 import com.smartecmx.postingbot.util.FacebookUtil;
 import com.smartecmx.postingbot.util.ImgflipUtil;
 import com.smartecmx.postingbot.util.MemeUtil;
+import com.smartecmx.postingbot.util.TechnicalTipUtil;
 import com.smartecmx.postingbot.util.TextToSpeechUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -28,10 +33,14 @@ public class FacebookService {
     @Value("${com.smartecmx.postingbot.util.cloudinary.background_songs_folder}")
     private String backgroundSongsFolder;
 
+    @Value("${com.smartecmx.postingbot.util.cloudinary.technical_tips_folder}")
+    private String technicalTipsFolder;
+
     private static final String CURIOUS_FACTS_FOLDER = "files/curiousFacts";
 
     private final MemeUtil memeUtil;
     private final CuriousFactUtil curiousFactUtil;
+    private final TechnicalTipUtil technicalTipUtil;
     private final ImgflipUtil imgflipUtil;
     private final FacebookUtil facebookUtil;
     private final TextToSpeechUtil textToSpeechUtil;
@@ -77,6 +86,28 @@ public class FacebookService {
             throw new PostingBotException("Failed to post curious fact to Facebook: " + e.getMessage());
         }
     
+    }
+
+    public String postTechnicalTipToFacebook() throws PostingBotException {
+        try {
+            TechnicalTip technicalTip = technicalTipUtil.getTechnicalTipForFacebook();
+            Map<String,String> technicalTipImage = cloudinaryService.getRandomItemFromFolder(technicalTipsFolder);
+            String technicalTipName = technicalTipImage.get("filename");
+            Optional<OverlayConfig> overlayConfigEnum = OverlayConfig.fromFilename(technicalTipName);
+            Optional<OverlayConfig> ctaOverlayConfigEnum = OverlayConfig.fromFilename(technicalTipName + "_CTA");
+            if (overlayConfigEnum.isEmpty() || ctaOverlayConfigEnum.isEmpty()) {
+                throw new PostingBotException("No overlay configuration found for technical tip image: " + technicalTipName);
+            }
+
+            Map techTip = cloudinaryService.generateTechnicalTip(technicalTipName, technicalTip.getTipText(), overlayConfigEnum.get(), technicalTip.getCtaText(), ctaOverlayConfigEnum.get());
+            String postId = facebookUtil.postFacebookFeed(technicalTip.getPostHeader(), techTip.get("secure_url").toString());
+            cloudinaryService.deleteCloudinaryItem(techTip.get("public_id").toString());
+            technicalTipUtil.updateTechnicalTipPublished("Facebook", technicalTip.getId());
+            return postId;
+        } catch (Exception e) {
+            emailService.sendFacebookPostErrorEmail(e.getMessage());
+            throw new PostingBotException("Failed to post technical tip to Facebook: " + e.getMessage());
+        }
     }
 
 }
