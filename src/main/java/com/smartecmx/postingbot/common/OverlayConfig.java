@@ -18,8 +18,8 @@ public enum OverlayConfig {
     TECHNICALTIP_3_IQOJSC_CTA("Courier", 43, "bold", "#FFFFFF", "north_west", 155, 1185, 400, "center"),
     TECHNICALTIP_4_TCZA85("Arial", 56, "bold", "#000000", "north_west", 100, 300, 900, "left"),
     TECHNICALTIP_4_TCZA85_CTA("Courier", 43, "bold", "#FFFFFF", "north_west", 280, 1268, 800, "center"),
-    TECHNICALTIP_5_AQE4OQ("Arial", 48, "bold", "#000000", "north_west", 20, 20, 800, "center"),
-    TECHNICALTIP_5_AQE4OQ_CTA("Courier", 48, "bold", "#FFFFFF", "north_west", 20, 20, 800, "center");
+    TECHNICALTIP_5_AQE4OQ("Arial", 56, "bold", "#FFFFFF", "north_west", 100, 350, 430, "left"),
+    TECHNICALTIP_5_AQE4OQ_CTA("Courier", 45, "bold", "#000000", "north_west", 280, 1268, 800, "center");
 
     private final String font;
     private final int fontSize;
