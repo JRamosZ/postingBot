@@ -91,7 +91,7 @@ public class FacebookService {
     public String postTechnicalTipToFacebook() throws PostingBotException {
         try {
             TechnicalTip technicalTip = technicalTipUtil.getTechnicalTipForFacebook();
-             Map<String,String> technicalTipImage = cloudinaryService.getRandomItemFromFolder(technicalTipsFolder);
+            Map<String,String> technicalTipImage = cloudinaryService.getRandomItemFromFolder(technicalTipsFolder);
             String technicalTipName = technicalTipImage.get("filename");
             Optional<OverlayConfig> overlayConfigEnum = OverlayConfig.fromFilename(technicalTipName);
             Optional<OverlayConfig> ctaOverlayConfigEnum = OverlayConfig.fromFilename(technicalTipName + "_CTA");

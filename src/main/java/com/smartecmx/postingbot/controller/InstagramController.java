@@ -32,14 +32,22 @@ public class InstagramController {
             return ResponseEntity.ok("Meme posted to Instagram successfully, ID: " + postId);
     }
 
-    // @Scheduled(cron = "0 0 12 * * 2", zone = "America/Mexico_City")
-    @Scheduled(cron = "00 54 00 * * 1", zone = "America/Mexico_City")
+    @Scheduled(cron = "0 0 12 * * 2", zone = "America/Mexico_City")
     @PostMapping("/postCuriousFact")
     public ResponseEntity<String> postCuriousFact() throws PostingBotException {
         log.info("Initiating post of curious fact to Instagram");
         String postId = instagramService.postCuriousFact();
         log.info("Curious fact posted to Instagram successfully, ID: " + postId);
         return ResponseEntity.ok("Curious fact posted to Instagram successfully, ID: " + postId);
+    }
+
+    @Scheduled(cron = "0 0 18 * * 7", zone = "America/Mexico_City")
+    @PostMapping("/postTechnicalTip")
+    public ResponseEntity<String> postTechnicalTip() throws PostingBotException {
+        log.info("Initiating post of technical tip to Instagram");
+        String postId = instagramService.postTechnicalTip();
+        log.info("Technical tip posted to Instagram successfully, ID: " + postId);
+        return ResponseEntity.ok("Technical tip posted to Instagram successfully, ID: " + postId);
     }
 
     @PostMapping("/postContainer/{containerId}")

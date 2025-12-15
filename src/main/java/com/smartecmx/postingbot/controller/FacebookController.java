@@ -38,6 +38,7 @@ public class FacebookController {
         return ResponseEntity.ok("Curious fact posted to Facebook successfully, ID: " + postId);
     }
 
+    @Scheduled(cron = "0 0 19 * * 7", zone = "America/Mexico_City")
     @PostMapping("/postTechnicalTip")
     public ResponseEntity<String> postTechnicalTip() throws PostingBotException {
         log.info("Initiating post of technical tip to Facebook");
