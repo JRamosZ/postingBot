@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -129,7 +130,7 @@ public class CloudinaryService {
                 ));
     }
     
-    public String generateTechnicalTip(String baseTemplatePublicId, String textTip, OverlayConfig tipConfig, String textCTA, OverlayConfig ctaConfig) throws Exception {
+    public Map<String, Object> generateTechnicalTip(String baseTemplatePublicId, String textTip, OverlayConfig tipConfig, String textCTA, OverlayConfig ctaConfig) throws Exception {
 
         TextLayer tipLayer = new TextLayer()
                 .fontFamily(tipConfig.getFont())
@@ -137,6 +138,13 @@ public class CloudinaryService {
                 .fontWeight(tipConfig.getWeight())
                 .textAlign(tipConfig.getAlign())
                 .text(textTip);
+        
+        TextLayer ctaLayer = new TextLayer()
+                .fontFamily(ctaConfig.getFont())
+                .fontSize(ctaConfig.getFontSize())
+                .fontWeight(ctaConfig.getWeight())
+                .textAlign(ctaConfig.getAlign())
+                .text(textCTA);
 
         Transformation tipTransformation = new Transformation()
                 .width(1080)
@@ -149,13 +157,34 @@ public class CloudinaryService {
                 .width(tipConfig.getMaxWidth())
                 .flags("layer_apply");
         
+        Transformation ctaTransformation = new Transformation()
+                .width(1080)
+                .crop("fit")
+                .overlay(ctaLayer)
+                .color(ctaConfig.getColorHex())
+                .gravity(ctaConfig.getGravity())
+                .x(ctaConfig.getX())
+                .y(ctaConfig.getY())
+                .width(ctaConfig.getMaxWidth())
+                .flags("layer_apply");
+        
         String uploadResult = cloudinary.url()
             .secure(true)
             .transformation(tipTransformation)
             .generate(baseTemplatePublicId);
+        
+        
+        String id = "technical_tip_intermediate_" + UUID.randomUUID().toString();
 
+        Map finalResult = cloudinary.uploader().upload(uploadResult, ObjectUtils.asMap(
+            "public_id", id,
+            "folder", "TechnicalTips",
+            "overwrite", true,
+            "type", "upload",
+            "transformation", ctaTransformation
+        ));
 
-        return uploadResult;
+        return finalResult;
     }
 
     public void deleteCloudinaryItem(String publicId) throws Exception {

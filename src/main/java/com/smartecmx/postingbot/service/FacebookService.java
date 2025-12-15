@@ -94,17 +94,18 @@ public class FacebookService {
              Map<String,String> technicalTipImage = cloudinaryService.getRandomItemFromFolder(technicalTipsFolder);
             String technicalTipName = technicalTipImage.get("filename");
             //TODO Delete
-            technicalTipName = "TechnicalTip_1_xayege";
+            technicalTipName = "TechnicalTip_3_iqojsc";
             Optional<OverlayConfig> overlayConfigEnum = OverlayConfig.fromFilename(technicalTipName);
             Optional<OverlayConfig> ctaOverlayConfigEnum = OverlayConfig.fromFilename(technicalTipName + "_CTA");
             if (overlayConfigEnum.isEmpty() || ctaOverlayConfigEnum.isEmpty()) {
                 throw new PostingBotException("No overlay configuration found for technical tip image: " + technicalTipName);
             }
 
-            String techTipUrl = cloudinaryService.generateTechnicalTip(technicalTipName, technicalTip.getTipText(), overlayConfigEnum.get(), technicalTip.getCtaText(), ctaOverlayConfigEnum.get());
+            Map techTip = cloudinaryService.generateTechnicalTip(technicalTipName, technicalTip.getTipText(), overlayConfigEnum.get(), technicalTip.getCtaText(), ctaOverlayConfigEnum.get());
             //TODO Post to Facebook
-            //TODO Delete from Cloudinary the transient image
-            return techTipUrl;
+            // String postId = facebookUtil.postFacebookFeed(technicalTip.getPostHeader(), techTip.get("secure_url").toString());
+            // cloudinaryService.deleteCloudinaryItem(techTip.get("public_id").toString());
+            return techTip.get("secure_url").toString();
         } catch (Exception e) {
             emailService.sendFacebookPostErrorEmail(e.getMessage());
             throw new PostingBotException("Failed to post technical tip to Facebook: " + e.getMessage());
