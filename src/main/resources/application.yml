@@ -2,9 +2,20 @@ spring:
   application:
     name: smartecbot-posts
   datasource:
-    url: jdbc:postgresql://${host_db:localhost}:${port_db:3306}/${db_name:smartecbot}
+    url: jdbc:postgresql://${host_db:localhost}:${port_db:5432}/${db_name:smartec_posting_bot}
     username: ${db_user:postgres}
     password: ${db_password:postgres}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail_user_name:userName}
+    password: ${mail_user_password:userPassword}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -12,13 +23,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        default_schema: ${db_schema:public}
+        default_schema: ${db_schema:smartec_posting_bot}
         temp:
           use_jdbc_metadata: false
-        hbm2ddl:
-          import_files_sql_extractor: org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
         ddl-auto: ${db_ddl_auto:none}
-        global_quoted_identifiers: false
+        globally_quoted_identifiers: false
+        format_sql: true
     show-sql: false
   sql:
     init:
@@ -33,3 +43,52 @@ server:
 logging:
   level:
     root: ${logging_level:INFO}
+
+google:
+  general:
+    apiKey: ${googleKey:googleKey}
+    language_code: ${googleLanguaje:es-US}
+    audio_encoding: ${googleAudioEncoding:MP3}
+  tts:
+    url: ${googleTtsUrl:https://texttospeech.googleapis.com/v1beta1/text:synthesize}
+    voice_name: ${googleTtsVoiceName:es-US-Standard-B}
+    speaking_rate: 1.0
+    pitch: 0
+
+com:
+  smartecmx:
+    postingbot:
+      util:
+        imgflip:
+          imgflip_url: ${imgflipUrl:https://api.imgflip.com/caption_image}
+          imgflip_username: ${imgflipUsername:imgflipUsername}
+          imgflip_password: ${imgflipPassword:imgflipPassword}
+        meta:
+          api_version: ${metaApiVersion:v23.0}
+          app_id: ${metaAppId:metaAppId}
+          app_secret: ${metaAppSecret:app_secret}
+          get_personal_long_life_token_url: ${getPersonalLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/oauth/access_token}
+          get_page_long_life_token_url: ${getPageLongLifeTokenUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/me/accounts}
+          debug_token_url: ${debugTokenUrl:https://graph.facebook.com/debug_token}
+          base_api_url: ${baseApiUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}}
+        facebook:
+          page_id: ${facebookPageId:facebookPageId}
+          facebook_post_url: ${facebookPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/photos}
+          facebook_video_post_url: ${facebookVideoPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/videos}
+          facebook_reels_post_url: ${facebookReelsPostUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.facebook.page_id}/video_reels}
+        instagram:
+          business_account_id: ${instagramBusinessAccountId:instagramBusinessAccountId}
+          create_container_url: ${instagramCreateContainerUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.instagram.business_account_id}/media}
+          publish_container_url: ${instagramPublishContainerUrl:https://graph.facebook.com/${com.smartecmx.postingbot.util.meta.api_version}/${com.smartecmx.postingbot.util.instagram.business_account_id}/media_publish}
+        mail:
+          send_mail: ${sendMail:false}
+          notifications_receiver: ${notificationsReceiver:notifications_receiver}
+          notifications_receiver_cc: ${notificationsReceiverCc:notifications_receiver_cc}
+        cloudinary:
+          cloud_name: ${cloudinaryCloudName:cloudinaryCloudName}
+          api_key: ${cloudinaryApiKey:cloudinaryApiKey}
+          api_secret: ${cloudinaryApiSecret:cloudinaryApiSecret}
+          logo_public_id: ${cloudinaryLogoPublicId:cloudinaryLogoPublicId}
+          background_pics_folder: ${cloudinaryBackgroundPicsFolder:cloudinaryBackgroundPicsFolder}
+          background_songs_folder: ${cloudinaryBackgroundSongsFolder:cloudinaryBackgroundSongsFolder}
+          technical_tips_folder: ${cloudinaryTechnicalTipsFolder:TechnicalTips}

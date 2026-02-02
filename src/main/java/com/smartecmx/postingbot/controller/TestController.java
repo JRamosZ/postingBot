@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
     
-    @GetMapping()
+    @GetMapping("/home")
     public ResponseEntity hellothere() {
         return new ResponseEntity<>("Hello, World!", org.springframework.http.HttpStatus.OK);
     }
