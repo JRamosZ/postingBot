@@ -87,7 +87,33 @@ Replace `{short_lived_token}` with the actual token value.
 
 ---
 
-## 🛠 Technologies
+## � Scheduled Tasks (Cron Schedule)
+
+All times are in **America/Mexico_City** timezone.
+
+| Day                | Time                | Endpoint           | Platform             | Action               |
+| ------------------ | ------------------- | ------------------ | -------------------- | -------------------- |
+| **Tuesday**        | 12:00 PM            | `postCuriousFact`  | Facebook & Instagram | Post Curious Fact    |
+| **Friday**         | 12:30 PM            | `postMeme`         | Instagram            | Post Meme            |
+| **Friday**         | 6:00 PM (18:00)     | `postMeme`         | Facebook             | Post Meme            |
+| **Sunday**         | 6:00 PM (18:00)     | `postTechnicalTip` | Instagram            | Post Technical Tip   |
+| **Sunday**         | 7:00 PM (19:00)     | `postTechnicalTip` | Facebook             | Post Technical Tip   |
+| **Every 12 hours** | 12:00 AM & 12:00 PM | `tokenStatus`      | Meta                 | Check Token Validity |
+
+### Cron Expression Reference
+
+```
+0 0 12 * * 2       → Tuesday 12:00 PM (Curious Facts)
+0 30 12 * * 5      → Friday 12:30 PM (Instagram Meme)
+0 0 18 * * 5       → Friday 6:00 PM (Facebook Meme)
+0 0 18 * * 7       → Sunday 6:00 PM (Instagram Technical Tip)
+0 0 19 * * 7       → Sunday 7:00 PM (Facebook Technical Tip)
+0 0 */12 * * *     → Every 12 hours (Token Status Check)
+```
+
+---
+
+## �🛠 Technologies
 
 - Java 17
 - Spring Boot
